@@ -73,6 +73,15 @@ export const projects: Project[] = [
     file: "/project-files/prmpt.html",
   },
   {
+    slug: "sudanese-tobe",
+    title: "The Sudanese Tobe",
+    year: 2026,
+    featured: true,
+    category: { en: "CULTURAL EDITORIAL", ar: "تقرير ثقافي" },
+    quote: { en: "Cloth is only a story — the woman tells it.", ar: "القماش حكاية… والمرأة هي الراوية." },
+    file: "/project-files/sudanese-tobe.html",
+  },
+  {
     slug: "skyelite",
     title: "SkyElite",
     year: 2026,
