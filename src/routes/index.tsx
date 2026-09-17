@@ -18,9 +18,7 @@ export const Route = createFileRoute("/")({
 });
 
 type Language = "en" | "ar";
-type Copy = Record<string, string>;
-
-const copy: Record<Language, Copy> = {
+const copy = {
   en: {
     booking: "Booking new projects · reserve yours →",
     about: "About",
@@ -79,7 +77,7 @@ const copy: Record<Language, Copy> = {
     close: "إغلاق",
     location: "الخرطوم · 15.50°N 32.56°E",
   },
-};
+} as const;
 
 function KazeMark() {
   return (
