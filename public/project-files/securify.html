@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>securify - Data Security SaaS</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    html, body, #root {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      font-family: 'Readex Pro', system-ui, -apple-system, sans-serif;
+      background: #000;
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .hero-title {
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+
+    .section-title {
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel Standalone for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const LogoSVG = ({ className = "h-5 w-5" }) => (
+      <svg viewBox="0 0 256 256" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 128 192 L 128 256 L 64.5 256 L 32 223 L 0 192 L 0 128 L 64 128 Z M 256 192 L 256 256 L 192.5 256 L 160 223 L 128 192 L 128 128 L 192 128 Z M 128 64 L 128 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 Z M 256 64 L 256 128 L 192.5 128 L 160 95 L 128 64 L 128 0 L 192 0 Z" fill="#ffffff" />
+      </svg>
+    );
+
+    /* ─── AMBIENT PARTICLE FIELD (snow + mist, sits behind everything below hero) ─── */
+    const ParticleField = () => {
+      const ref = React.useRef(null);
+
+      React.useEffect(() => {
+        const canvas = ref.current;
+        const ctx = canvas.getContext('2d');
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let w = 0, h = 0, dpr = 1, raf = 0;
+        let flakes = [], blobs = [];
+
+        const rand = (a, b) => a + Math.random() * (b - a);
+
+        /* bias positions toward the left / right edges, like the video */
+        const sideX = () => {
+          const r = Math.random();
+          if (r < 0.38) return rand(0, w * 0.22);
+          if (r < 0.76) return rand(w * 0.78, w);
+          return rand(w * 0.22, w * 0.78);
+        };
+
+        const makeFlake = (spawnTop) => {
+          const centerBand = Math.random() > 0.76;   /* few & faint in the middle */
+          const type = Math.random();                /* size class: sharp / soft / chunk */
+          return {
+            x: centerBand ? rand(w * 0.25, w * 0.75) : sideX(),
+            y: spawnTop ? rand(-40, -5) : rand(0, h),
+            r: type < 0.6 ? rand(0.6, 1.8) : type < 0.9 ? rand(1.8, 3.2) : rand(3.5, 6.5),
+            blur: type >= 0.6,
+            vy: rand(0.12, 0.5),
+            sway: rand(0, Math.PI * 2),
+            swaySpeed: rand(0.002, 0.006),
+            swayAmp: rand(0.15, 0.5),
+            a: centerBand ? rand(0.05, 0.14) : rand(0.15, 0.5) * (type < 0.6 ? 1 : 0.45),
+          };
+        };
+
+        const resize = () => {
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          w = window.innerWidth;
+          h = window.innerHeight;
+          canvas.width = Math.floor(w * dpr);
+          canvas.height = Math.floor(h * dpr);
+          canvas.style.width = w + 'px';
+          canvas.style.height = h + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          const count = Math.min(150, Math.max(60, Math.floor((w * h) / 14000)));
+          flakes = Array.from({ length: count }, () => makeFlake(false));
+          blobs = Array.from({ length: 6 }, (_, i) => ({
+            x: i % 2 === 0 ? rand(-40, w * 0.16) : rand(w * 0.84, w + 40),
+            y: rand(0, h),
+            r: rand(160, 380),
+            a: rand(0.02, 0.05),
+            vy: rand(0.03, 0.09),
+            vx: rand(-0.04, 0.04),
+          }));
+        };
+
+        const draw = () => {
+          ctx.clearRect(0, 0, w, h);
+          /* soft mist clouds hugging the edges */
+          for (const b of blobs) {
+            const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+            g.addColorStop(0, 'rgba(255,255,255,' + b.a + ')');
+            g.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          /* snow flakes & powder chunks */
+          for (const f of flakes) {
+            if (f.blur) {
+              const rr = f.r * 3;
+              const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, rr);
+              g.addColorStop(0, 'rgba(255,255,255,' + f.a + ')');
+              g.addColorStop(1, 'rgba(255,255,255,0)');
+              ctx.fillStyle = g;
+              ctx.beginPath();
+              ctx.arc(f.x, f.y, rr, 0, Math.PI * 2);
+              ctx.fill();
+            } else {
+              ctx.fillStyle = 'rgba(255,255,255,' + f.a + ')';
+              ctx.beginPath();
+              ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+        };
+
+        const tick = () => {
+          for (const b of blobs) {
+            b.y += b.vy; b.x += b.vx;
+            if (b.y - b.r > h) b.y = -b.r;
+            if (b.y + b.r < 0) b.y = h + b.r;
+          }
+          for (let i = 0; i < flakes.length; i++) {
+            const f = flakes[i];
+            f.sway += f.swaySpeed;
+            f.y += f.vy;
+            f.x += Math.sin(f.sway) * f.swayAmp * 0.35;
+            if (f.y - f.r * 3 > h) flakes[i] = makeFlake(true);
+          }
+          draw();
+          raf = requestAnimationFrame(tick);
+        };
+
+        resize();
+        if (reduced) { draw(); } else { tick(); }
+        const onResize = () => { resize(); if (reduced) draw(); };
+        window.addEventListener('resize', onResize);
+        return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); };
+      }, []);
+
+      return (
+        <canvas
+          ref={ref}
+          aria-hidden="true"
+          className="fixed inset-0 pointer-events-none"
+          style={{ zIndex: -1 }}
+        />
+      );
+    };
+
+    /* ─── HERO SECTION (untouched) ─── */
+    const Hero = () => (
+      <section className="relative h-screen w-full overflow-hidden bg-black">
+        <video className="absolute inset-0 w-full h-full object-cover" autoPlay loop muted playsInline src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_063509_7d167302-4fd4-480b-8260-18ab572333d4.mp4" />
+        <nav className="absolute z-20 px-6 md:px-10 pt-6 top-0 left-0 right-0 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 bg-neutral-900/90 backdrop-blur rounded-full pl-4 pr-6 py-3">
+            <LogoSVG />
+            <span className="text-white text-sm font-normal tracking-tight">securify</span>
+          </div>
+          <div className="hidden md:flex items-center gap-1 bg-neutral-900/90 backdrop-blur rounded-full px-3 py-2">
+            {['platform', 'solutions', 'company', 'support'].map((link) => (
+              <a key={link} href={`#${link}`} className="text-neutral-300 hover:text-white transition-colors text-sm px-5 py-2 rounded-full">{link}</a>
+            ))}
+          </div>
+          <button className="bg-white text-black text-sm font-normal rounded-full px-6 py-3 hover:bg-neutral-200 transition-colors">get started</button>
+        </nav>
+        <div className="relative h-full w-full">
+          <h1 className="hero-title absolute text-white font-medium text-[14vw] md:text-[13vw] left-4 md:left-10 top-[18%]">protect</h1>
+          <h1 className="hero-title absolute text-white font-medium text-[14vw] md:text-[13vw] right-4 md:right-10 top-[38%]">your</h1>
+          <h1 className="hero-title absolute text-white font-medium text-[14vw] md:text-[13vw] left-[18%] md:left-[28%] top-[58%]">data</h1>
+          <p className="absolute left-6 md:left-10 top-[46%] max-w-[240px] text-[15px] leading-snug text-white/90">we can guarding your data with utmost care, empowering you with privacy everywhere</p>
+          <div className="absolute right-6 md:right-24 top-[14%]">
+            <div className="flex items-center gap-3 justify-end">
+              <div className="hidden md:block h-px w-24 bg-white/40 rotate-[20deg]" />
+              <span className="text-4xl md:text-5xl font-medium tracking-tight text-white">+65k</span>
+            </div>
+            <p className="text-xs md:text-sm text-white/70 mt-1 text-right">startups use</p>
+          </div>
+          <div className="absolute left-6 md:left-20 bottom-20 md:bottom-24">
+            <div className="flex items-center gap-3">
+              <span className="text-4xl md:text-5xl font-medium tracking-tight text-white">+1.5b</span>
+              <div className="hidden md:block h-px w-24 bg-white/40 rotate-[-20deg]" />
+            </div>
+            <p className="text-xs md:text-sm text-white/70 mt-1">gb data was protected</p>
+          </div>
+          <div className="absolute right-6 md:right-20 bottom-16 md:bottom-20">
+            <div className="flex items-center gap-3 justify-end">
+              <div className="hidden md:block h-px w-24 bg-white/40 rotate-[-20deg]" />
+              <span className="text-4xl md:text-5xl font-medium tracking-tight text-white">+300k</span>
+            </div>
+            <p className="text-xs md:text-sm text-white/70 mt-1 text-right">downloads</p>
+          </div>
+        </div>
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-b from-transparent to-black" />
+      </section>
+    );
+
+    /* ─── TRUSTED BY / LOGOS ─── */
+    const TrustedBy = () => (
+      <section className="relative py-20 md:py-28 px-6 md:px-10">
+        <p className="text-center text-xs md:text-sm text-white/40 uppercase tracking-[0.2em] mb-12">trusted by teams at</p>
+        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8 max-w-4xl mx-auto opacity-40">
+          {['vercel', 'linear', 'notion', 'stripe', 'figma', 'raycast'].map((brand) => (
+            <span key={brand} className="text-lg md:text-xl font-medium text-white tracking-tight">{brand}</span>
+          ))}
+        </div>
+      </section>
+    );
+
+    /* ─── FEATURES ─── */
+    const features = [
+      {
+        icon: (
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+        ),
+        title: "end-to-end encryption",
+        desc: "every byte encrypted at rest and in transit. aes-256 with zero-knowledge architecture — not even we can see your data.",
+      },
+      {
+        icon: (
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        ),
+        title: "real-time threat monitoring",
+        desc: "ai-driven anomaly detection scans 24/7. threats are flagged in under 50ms before they ever reach your systems.",
+      },
+      {
+        icon: (
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+          </svg>
+        ),
+        title: "compliance on autopilot",
+        desc: "soc 2, gdpr, hipaa, iso 27001 — automated evidence collection and audit-ready reports in one click.",
+      },
+      {
+        icon: (
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+          </svg>
+        ),
+        title: "instant incident response",
+        desc: "automated playbooks isolate breaches in seconds. rollback, notify, and recover without human intervention.",
+      },
+      {
+        icon: (
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+          </svg>
+        ),
+        title: "granular access control",
+        desc: "role-based permissions, sso, and hardware key enforcement. decide exactly who touches what, down to the field.",
+      },
+      {
+        icon: (
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+          </svg>
+        ),
+        title: "unified security dashboard",
+        desc: "one pane of glass for your entire security posture. risk scores, trends, and alerts — all in real time.",
+      },
+    ];
+
+    const Features = () => (
+      <section id="platform" className="relative py-24 md:py-36 px-6 md:px-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-16 md:mb-24">
+            <p className="text-xs md:text-sm text-white/40 uppercase tracking-[0.2em] mb-4">platform</p>
+            <h2 className="section-title text-3xl md:text-5xl lg:text-6xl font-medium text-white max-w-2xl">
+              security that works while you sleep
+            </h2>
+            <p className="mt-6 text-white/70 text-base md:text-lg max-w-lg leading-relaxed">
+              one platform. every layer. securify wraps your entire stack in enterprise-grade protection without the enterprise complexity.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f, i) => (
+              <div key={i} className="group bg-neutral-900/60 border border-white/5 rounded-2xl p-8 hover:border-white/15 transition-colors duration-300 backdrop-blur-sm">
+                <div className="text-white/70 group-hover:text-white transition-colors mb-6">{f.icon}</div>
+                <h3 className="text-white font-medium text-lg mb-3 tracking-tight">{f.title}</h3>
+                <p className="text-white/50 text-sm leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+
+    /* ─── HOW IT WORKS ─── */
+    const steps = [
+      { num: "01", title: "connect", desc: "plug securify into your stack in under 5 minutes. sdk, api, or one-click integrations with aws, gcp, azure, and 200+ tools." },
+      { num: "02", title: "scan", desc: "our engine maps every data flow, flags vulnerabilities, and builds a living threat model of your infrastructure." },
+      { num: "03", title: "shield", desc: "protection activates automatically. encrypt, monitor, respond — hands-free security from day one." },
+    ];
+
+    const HowItWorks = () => (
+      <section id="solutions" className="relative py-24 md:py-36 px-6 md:px-10">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16 md:mb-24">
+            <p className="text-xs md:text-sm text-white/40 uppercase tracking-[0.2em] mb-4">how it works</p>
+            <h2 className="section-title text-3xl md:text-5xl font-medium text-white">three steps to zero trust</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+            {steps.map((s, i) => (
+              <div key={i} className="relative text-center md:text-left">
+                <span className="text-6xl md:text-7xl font-light text-white/10 tracking-tight">{s.num}</span>
+                <h3 className="text-white font-medium text-xl mt-4 mb-3 tracking-tight">{s.title}</h3>
+                <p className="text-white/50 text-sm leading-relaxed">{s.desc}</p>
+                {i < 2 && (
+                  <div className="hidden md:block absolute top-8 -right-4 h-px w-8 bg-white/20 rotate-[-20deg]" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+
+    /* ─── BIG METRICS BAND ─── */
+    const Metrics = () => (
+      <section className="relative py-24 md:py-32 px-6 md:px-10 border-y border-white/5">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8 text-center">
+          {[
+            { value: "99.99%", label: "uptime sla" },
+            { value: "<50ms", label: "threat detection" },
+            { value: "2.4m+", label: "attacks blocked daily" },
+            { value: "140+", label: "countries covered" },
+          ].map((m, i) => (
+            <div key={i}>
+              <p className="text-3xl md:text-5xl font-medium text-white tracking-tight">{m.value}</p>
+              <p className="text-xs md:text-sm text-white/50 mt-2">{m.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+
+    /* ─── TESTIMONIALS ─── */
+    const testimonials = [
+      {
+        quote: "we went from zero compliance to soc 2 type ii in six weeks. securify basically did the work for us.",
+        name: "sarah chen",
+        role: "cto, driftlab",
+      },
+      {
+        quote: "the real-time monitoring caught a credential leak 3am on a saturday. by the time i woke up, it was already contained.",
+        name: "marcus ojeda",
+        role: "head of eng, pylon",
+      },
+      {
+        quote: "we replaced four separate security tools with securify. cheaper, faster, and our team actually understands it.",
+        name: "aisha patel",
+        role: "vp infra, novahealth",
+      },
+    ];
+
+    const Testimonials = () => (
+      <section className="relative py-24 md:py-36 px-6 md:px-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-16 md:mb-24">
+            <p className="text-xs md:text-sm text-white/40 uppercase tracking-[0.2em] mb-4">testimonials</p>
+            <h2 className="section-title text-3xl md:text-5xl font-medium text-white max-w-xl">teams that sleep better</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <div key={i} className="bg-neutral-900/60 border border-white/5 rounded-2xl p-8 flex flex-col justify-between backdrop-blur-sm">
+                <p className="text-white/80 text-sm md:text-base leading-relaxed mb-8">"{t.quote}"</p>
+                <div>
+                  <p className="text-white text-sm font-medium">{t.name}</p>
+                  <p className="text-white/40 text-xs mt-1">{t.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+
+    /* ─── PRICING ─── */
+    const plans = [
+      {
+        name: "starter",
+        price: "$0",
+        period: "/mo",
+        desc: "for side projects and early prototypes",
+        features: ["up to 1gb encrypted storage", "basic threat scanning", "community support", "1 team member"],
+        cta: "start free",
+        highlighted: false,
+      },
+      {
+        name: "growth",
+        price: "$79",
+        period: "/mo",
+        desc: "for startups scaling fast",
+        features: ["up to 500gb encrypted storage", "real-time ai monitoring", "compliance automation", "up to 25 members", "priority support", "custom integrations"],
+        cta: "start 14-day trial",
+        highlighted: true,
+      },
+      {
+        name: "enterprise",
+        price: "custom",
+        period: "",
+        desc: "for orgs with advanced needs",
+        features: ["unlimited storage", "dedicated security engineer", "custom sla & dpas", "sso + scim provisioning", "on-prem deployment option", "24/7 war-room support"],
+        cta: "talk to sales",
+        highlighted: false,
+      },
+    ];
+
+    const Pricing = () => (
+      <section id="company" className="relative py-24 md:py-36 px-6 md:px-10">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16 md:mb-24">
+            <p className="text-xs md:text-sm text-white/40 uppercase tracking-[0.2em] mb-4">pricing</p>
+            <h2 className="section-title text-3xl md:text-5xl font-medium text-white">simple. no surprises.</h2>
+            <p className="mt-6 text-white/50 text-base max-w-md mx-auto">start free. scale when you're ready. cancel anytime.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            {plans.map((p, i) => (
+              <div key={i} className={`rounded-2xl p-8 flex flex-col ${p.highlighted ? 'bg-white text-black' : 'bg-neutral-900/60 border border-white/5 backdrop-blur-sm'}`}>
+                <p className={`text-sm font-medium tracking-tight ${p.highlighted ? 'text-black' : 'text-white'}`}>{p.name}</p>
+                <div className="mt-4 mb-2 flex items-baseline gap-1">
+                  <span className={`text-4xl font-medium tracking-tight ${p.highlighted ? 'text-black' : 'text-white'}`}>{p.price}</span>
+                  {p.period && <span className={`text-sm ${p.highlighted ? 'text-black/60' : 'text-white/50'}`}>{p.period}</span>}
+                </div>
+                <p className={`text-sm mb-8 ${p.highlighted ? 'text-black/60' : 'text-white/50'}`}>{p.desc}</p>
+                <ul className="space-y-3 mb-10 flex-1">
+                  {p.features.map((f, j) => (
+                    <li key={j} className={`text-sm flex items-center gap-2 ${p.highlighted ? 'text-black/80' : 'text-white/60'}`}>
+                      <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <button className={`w-full rounded-full px-6 py-3 text-sm font-medium transition-colors ${p.highlighted ? 'bg-black text-white hover:bg-neutral-800' : 'bg-white/10 text-white hover:bg-white/20'}`}>
+                  {p.cta}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+
+    /* ─── FINAL CTA ─── */
+    const FinalCTA = () => (
+      <section className="relative py-32 md:py-48 px-6 md:px-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)]" />
+        <div className="relative max-w-3xl mx-auto text-center">
+          <h2 className="section-title text-4xl md:text-6xl lg:text-7xl font-medium text-white tracking-tight">
+            your data deserves better
+          </h2>
+          <p className="mt-6 text-white/60 text-base md:text-lg max-w-md mx-auto leading-relaxed">
+            join 65,000+ teams who stopped worrying about breaches. set up in minutes, protected forever.
+          </p>
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button className="bg-white text-black text-sm font-medium rounded-full px-8 py-4 hover:bg-neutral-200 transition-colors w-full sm:w-auto">
+              start protecting — it's free
+            </button>
+            <button className="bg-white/10 text-white text-sm font-medium rounded-full px-8 py-4 hover:bg-white/20 transition-colors w-full sm:w-auto">
+              book a demo
+            </button>
+          </div>
+          <p className="mt-6 text-xs text-white/30">no credit card required · free tier forever · cancel anytime</p>
+        </div>
+      </section>
+    );
+
+    /* ─── FOOTER ─── */
+    const Footer = () => (
+      <footer className="relative border-t border-white/5 py-16 md:py-20 px-6 md:px-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
+            <div className="col-span-2 md:col-span-1">
+              <div className="flex items-center gap-2 mb-4">
+                <LogoSVG className="h-4 w-4" />
+                <span className="text-white text-sm font-medium tracking-tight">securify</span>
+              </div>
+              <p className="text-white/40 text-xs leading-relaxed">data security for teams that move fast.</p>
+            </div>
+            {[
+              { title: "product", links: ["features", "pricing", "integrations", "changelog", "docs"] },
+              { title: "company", links: ["about", "blog", "careers", "press", "contact"] },
+              { title: "resources", links: ["community", "guides", "api reference", "status", "trust center"] },
+              { title: "legal", links: ["privacy", "terms", "security", "gdpr", "cookies"] },
+            ].map((col, i) => (
+              <div key={i}>
+                <p className="text-white text-xs font-medium uppercase tracking-wider mb-4">{col.title}</p>
+                <ul className="space-y-3">
+                  {col.links.map((link, j) => (
+                    <li key={j}>
+                      <a href="#" className="text-white/40 hover:text-white text-sm transition-colors">{link}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-white/30 text-xs">© 2026 securify, inc. all rights reserved.</p>
+            <div className="flex items-center gap-6">
+              {["twitter", "github", "linkedin", "discord"].map((s) => (
+                <a key={s} href="#" className="text-white/30 hover:text-white text-xs transition-colors">{s}</a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </footer>
+    );
+
+    /* ─── APP ─── */
+    const App = () => (
+      <React.Fragment>
+        <ParticleField />
+        <Hero />
+        <TrustedBy />
+        <Features />
+        <HowItWorks />
+        <Metrics />
+        <Testimonials />
+        <Pricing />
+        <FinalCTA />
+        <Footer />
+      </React.Fragment>
+    );
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

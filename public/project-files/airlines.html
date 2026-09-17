@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airlines - Travel the World Without Any Stress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Hide scrollbars globally */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        html {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            scroll-behavior: smooth;
+        }
+
+        /* Fade-in-up animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+        .delay-700 { animation-delay: 0.7s; }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* Video background */
+        .video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* Gradient overlay */
+        .gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.40) 100%);
+            z-index: 1;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Mobile menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        /* Card hover */
+        .destination-card {
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .destination-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+        .destination-card:hover img {
+            transform: scale(1.08);
+        }
+        .destination-card img {
+            transition: transform 0.6s ease;
+        }
+
+        /* Service card */
+        .service-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        /* Counter animation */
+        .counter {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Testimonial card */
+        .testimonial-card {
+            transition: transform 0.3s ease;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Navbar scroll */
+        .nav-scrolled {
+            background: rgba(0, 0, 0, 0.85) !important;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Step connector line */
+        .step-line {
+            background: linear-gradient(90deg, #e5e7eb 0%, #9ca3af 50%, #e5e7eb 100%);
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 overflow-x-hidden">
+
+    <!-- ============ NAVIGATION ============ -->
+    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 px-6 md:px-12 py-5 transition-all duration-500">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="text-white font-semibold text-xl tracking-tight">Airlines</a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="#destinations" class="text-white/90 hover:text-white transition-colors duration-200" style="font-size:14px;font-weight:400;">About</a>
+                <a href="#services" class="text-white/90 hover:text-white transition-colors duration-200" style="font-size:14px;font-weight:400;">Services</a>
+                <a href="#destinations" class="text-white/90 hover:text-white transition-colors duration-200" style="font-size:14px;font-weight:400;">Locations</a>
+                <a href="#testimonials" class="text-white/90 hover:text-white transition-colors duration-200" style="font-size:14px;font-weight:400;">Places</a>
+                <a href="#footer" class="text-white/90 hover:text-white transition-colors duration-200" style="font-size:14px;font-weight:400;">Support</a>
+            </div>
+
+            <!-- Right Side -->
+            <div class="hidden lg:block">
+                <button class="bg-transparent border border-white/80 text-white hover:bg-white hover:text-black transition-all duration-300 rounded-full px-6 py-2 cursor-pointer" style="font-size:14px;font-weight:400;">
+                    Start Travel
+                </button>
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <button id="menuBtn" class="lg:hidden flex flex-col items-center justify-center w-10 h-10 gap-1.5 cursor-pointer" onclick="toggleMenu()">
+                <span class="block w-6 h-0.5 bg-white rounded-full transition-all duration-300" id="line1"></span>
+                <span class="block w-6 h-0.5 bg-white rounded-full transition-all duration-300" id="line2"></span>
+                <span class="block w-4 h-0.5 bg-white rounded-full transition-all duration-300 self-end mr-2" id="line3"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 w-full h-screen bg-gray-950/98 backdrop-blur-xl flex flex-col items-center justify-center space-y-8 lg:hidden z-[60]">
+        <button class="absolute top-6 right-6 text-white text-3xl cursor-pointer w-10 h-10 flex items-center justify-center" onclick="toggleMenu()">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <a href="#destinations" class="text-white text-2xl font-light hover:opacity-70 transition-opacity" onclick="toggleMenu()">About</a>
+        <a href="#services" class="text-white text-2xl font-light hover:opacity-70 transition-opacity" onclick="toggleMenu()">Services</a>
+        <a href="#destinations" class="text-white text-2xl font-light hover:opacity-70 transition-opacity" onclick="toggleMenu()">Locations</a>
+        <a href="#testimonials" class="text-white text-2xl font-light hover:opacity-70 transition-opacity" onclick="toggleMenu()">Places</a>
+        <a href="#footer" class="text-white text-2xl font-light hover:opacity-70 transition-opacity" onclick="toggleMenu()">Support</a>
+        <button class="bg-white text-black rounded-full px-8 py-3 mt-4 cursor-pointer font-medium text-sm hover:scale-105 transition-transform">
+            Start Travel
+        </button>
+    </div>
+
+    <!-- ============ HERO SECTION ============ -->
+    <section class="relative h-screen w-full overflow-hidden">
+        <!-- Background Video -->
+        <video class="video-bg" autoplay loop muted playsinline>
+            <source src="https://cdn.sceneai.art/Hero%20Section%20Video/01d1f8de-fec0-4bf5-8b48-9fc2dbc8c6b0.mp4" type="video/mp4">
+        </video>
+
+        <!-- Dark Gradient Overlay -->
+        <div class="gradient-overlay"></div>
+
+        <!-- Content Layer -->
+        <div class="content-layer h-full flex flex-col">
+            <!-- Spacer for nav -->
+            <div class="h-24"></div>
+
+            <!-- Hero Center Content -->
+            <div class="flex-1 flex items-center justify-center px-6">
+                <div class="max-w-2xl mx-auto text-center">
+                    <!-- Main Headline -->
+                    <h1 class="animate-fade-in-up delay-300 text-white font-medium leading-tight" style="font-size:38px;line-height:1.1;" id="heroHeadline">
+                        Travel the World<br>Without Any Stress
+                    </h1>
+
+                    <!-- Secondary Text -->
+                    <p class="animate-fade-in-up delay-500 text-white/80 mt-6 max-w-lg mx-auto" style="font-size:15px;" id="heroSubtext">
+                        Let us take care of the planning while you enjoy meaningful travel experiences crafted just for you.
+                    </p>
+
+                    <!-- CTA Button -->
+                    <div class="animate-fade-in-up delay-700 mt-10">
+                        <a href="#destinations" class="inline-block bg-white text-black font-medium rounded-full shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer py-[12px] px-[26px]" style="font-size:15px;">
+                            Start Exploring
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll indicator -->
+            <div class="animate-fade-in-up delay-700 flex justify-center pb-8">
+                <div class="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center pt-2">
+                    <div class="w-1 h-2.5 bg-white/70 rounded-full animate-bounce"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ POPULAR DESTINATIONS ============ -->
+    <section id="destinations" class="py-20 md:py-28 px-6 md:px-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <!-- Section Header -->
+            <div class="reveal text-center mb-14">
+                <span class="text-sm font-medium text-blue-600 uppercase tracking-widest">Explore The World</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-3">Popular Destinations</h2>
+                <p class="text-gray-500 mt-4 max-w-md mx-auto text-[15px]">Discover the most breathtaking places loved by thousands of travelers worldwide.</p>
+            </div>
+
+            <!-- Destination Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 - Santorini -->
+                <div class="reveal reveal-delay-1 destination-card bg-white rounded-2xl overflow-hidden shadow-md cursor-pointer group">
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=600&h=400&fit=crop&q=80" alt="Santorini, Greece" class="w-full h-full object-cover">
+                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <span class="text-xs font-semibold text-gray-800">4.9</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full">
+                            Greece
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 text-[15px]">Santorini</h3>
+                        <p class="text-gray-400 text-xs mt-1">7 Days Tour</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <span class="text-blue-600 font-bold text-lg">$1,299</span>
+                            <span class="text-gray-400 text-xs line-through">$1,599</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 - Tokyo -->
+                <div class="reveal reveal-delay-2 destination-card bg-white rounded-2xl overflow-hidden shadow-md cursor-pointer group">
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop&q=80" alt="Tokyo, Japan" class="w-full h-full object-cover">
+                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <span class="text-xs font-semibold text-gray-800">4.8</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full">
+                            Japan
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 text-[15px]">Tokyo</h3>
+                        <p class="text-gray-400 text-xs mt-1">5 Days Tour</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <span class="text-blue-600 font-bold text-lg">$1,499</span>
+                            <span class="text-gray-400 text-xs line-through">$1,899</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 - Paris -->
+                <div class="reveal reveal-delay-3 destination-card bg-white rounded-2xl overflow-hidden shadow-md cursor-pointer group">
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&h=400&fit=crop&q=80" alt="Paris, France" class="w-full h-full object-cover">
+                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <span class="text-xs font-semibold text-gray-800">4.9</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full">
+                            France
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 text-[15px]">Paris</h3>
+                        <p class="text-gray-400 text-xs mt-1">6 Days Tour</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <span class="text-blue-600 font-bold text-lg">$1,199</span>
+                            <span class="text-gray-400 text-xs line-through">$1,499</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 - Bali -->
+                <div class="reveal reveal-delay-4 destination-card bg-white rounded-2xl overflow-hidden shadow-md cursor-pointer group">
+                    <div class="relative h-56 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&h=400&fit=crop&q=80" alt="Bali, Indonesia" class="w-full h-full object-cover">
+                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            <span class="text-xs font-semibold text-gray-800">4.7</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full">
+                            Indonesia
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-semibold text-gray-900 text-[15px]">Bali</h3>
+                        <p class="text-gray-400 text-xs mt-1">8 Days Tour</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <span class="text-blue-600 font-bold text-lg">$999</span>
+                            <span class="text-gray-400 text-xs line-through">$1,299</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View All Button -->
+            <div class="reveal text-center mt-12">
+                <a href="#" class="inline-flex items-center gap-2 text-blue-600 font-medium text-sm hover:gap-3 transition-all duration-300">
+                    View All Destinations
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SERVICES / FEATURES ============ -->
+    <section id="services" class="py-20 md:py-28 px-6 md:px-12 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <!-- Section Header -->
+            <div class="reveal text-center mb-14">
+                <span class="text-sm font-medium text-blue-600 uppercase tracking-widest">Why Choose Us</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-3">Our Premium Services</h2>
+                <p class="text-gray-500 mt-4 max-w-md mx-auto text-[15px]">We provide end-to-end travel solutions designed to make your journey seamless.</p>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Service 1 -->
+                <div class="reveal reveal-delay-1 service-card bg-gray-50 rounded-2xl p-7 text-center border border-gray-100">
+                    <div class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-5">
+                        <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 text-[15px] mb-2">Smart Search</h3>
+                    <p class="text-gray-500 text-[13px] leading-relaxed">Find the best flights and deals with our AI-powered search engine in seconds.</p>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="reveal reveal-delay-2 service-card bg-gray-50 rounded-2xl p-7 text-center border border-gray-100">
+                    <div class="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-5">
+                        <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 text-[15px] mb-2">Secure Booking</h3>
+                    <p class="text-gray-500 text-[13px] leading-relaxed">Your payments and personal data are protected with bank-level encryption.</p>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="reveal reveal-delay-3 service-card bg-gray-50 rounded-2xl p-7 text-center border border-gray-100">
+                    <div class="w-14 h-14 bg-purple-50 rounded-xl flex items-center justify-center mx-auto mb-5">
+                        <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 text-[15px] mb-2">24/7 Support</h3>
+                    <p class="text-gray-500 text-[13px] leading-relaxed">Our dedicated team is available around the clock to assist you anywhere.</p>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="reveal reveal-delay-4 service-card bg-gray-50 rounded-2xl p-7 text-center border border-gray-100">
+                    <div class="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-5">
+                        <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 text-[15px] mb-2">Best Prices</h3>
+                    <p class="text-gray-500 text-[13px] leading-relaxed">We guarantee the lowest prices with exclusive deals and loyalty rewards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ STATISTICS ============ -->
+    <section class="py-20 md:py-24 px-6 md:px-12 bg-gray-950 relative overflow-hidden">
+        <!-- Subtle background pattern -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-10 left-10 w-72 h-72 bg-blue-500 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-purple-500 rounded-full blur-[150px]"></div>
+        </div>
+
+        <div class="max-w-6xl mx-auto relative z-10">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-10">
+                <!-- Stat 1 -->
+                <div class="reveal reveal-delay-1 text-center">
+                    <div class="text-4xl md:text-5xl font-bold text-white counter" data-target="150">0</div>
+                    <div class="text-blue-400 font-semibold text-lg mt-1">+</div>
+                    <p class="text-gray-400 text-sm mt-2">Destinations</p>
+                </div>
+                <!-- Stat 2 -->
+                <div class="reveal reveal-delay-2 text-center">
+                    <div class="text-4xl md:text-5xl font-bold text-white counter" data-target="50">0</div>
+                    <div class="text-blue-400 font-semibold text-lg mt-1">K+</div>
+                    <p class="text-gray-400 text-sm mt-2">Happy Travelers</p>
+                </div>
+                <!-- Stat 3 -->
+                <div class="reveal reveal-delay-3 text-center">
+                    <div class="text-4xl md:text-5xl font-bold text-white counter" data-target="12">0</div>
+                    <div class="text-blue-400 font-semibold text-lg mt-1">+</div>
+                    <p class="text-gray-400 text-sm mt-2">Years Experience</p>
+                </div>
+                <!-- Stat 4 -->
+                <div class="reveal reveal-delay-4 text-center">
+                    <div class="text-4xl md:text-5xl font-bold text-white counter" data-target="98">0</div>
+                    <div class="text-blue-400 font-semibold text-lg mt-1">%</div>
+                    <p class="text-gray-400 text-sm mt-2">Satisfaction Rate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section class="py-20 md:py-28 px-6 md:px-12 bg-white">
+        <div class="max-w-5xl mx-auto">
+            <!-- Section Header -->
+            <div class="reveal text-center mb-16">
+                <span class="text-sm font-medium text-blue-600 uppercase tracking-widest">Simple Process</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-3">How It Works</h2>
+                <p class="text-gray-500 mt-4 max-w-md mx-auto text-[15px]">Book your dream trip in just three easy steps.</p>
+            </div>
+
+            <!-- Steps -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
+                <!-- Connector line (desktop) -->
+                <div class="hidden md:block absolute top-12 left-[20%] right-[20%] h-px step-line"></div>
+
+                <!-- Step 1 -->
+                <div class="reveal reveal-delay-1 text-center relative">
+                    <div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-200 relative z-10">
+                        <span class="text-white text-2xl font-bold">01</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 text-lg mb-2">Choose Destination</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed max-w-[250px] mx-auto">Browse our curated collection of stunning destinations worldwide.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="reveal reveal-delay-2 text-center relative">
+                    <div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-200 relative z-10">
+                        <span class="text-white text-2xl font-bold">02</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 text-lg mb-2">Pick Your Dates</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed max-w-[250px] mx-auto">Select flexible travel dates that fit your schedule perfectly.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="reveal reveal-delay-3 text-center relative">
+                    <div class="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-200 relative z-10">
+                        <span class="text-white text-2xl font-bold">03</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 text-lg mb-2">Enjoy Your Trip</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed max-w-[250px] mx-auto">Relax and let us handle everything while you make memories.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ TESTIMONIALS ============ -->
+    <section id="testimonials" class="py-20 md:py-28 px-6 md:px-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <!-- Section Header -->
+            <div class="reveal text-center mb-14">
+                <span class="text-sm font-medium text-blue-600 uppercase tracking-widest">Testimonials</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-3">What Travelers Say</h2>
+                <p class="text-gray-500 mt-4 max-w-md mx-auto text-[15px]">Real stories from real travelers who trusted us with their journeys.</p>
+            </div>
+
+            <!-- Testimonial Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="reveal reveal-delay-1 testimonial-card bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">"Absolutely incredible experience! The entire trip to Santorini was flawlessly organized. Every detail was taken care of, from airport transfers to sunset dinner reservations."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=80&h=80&fit=crop&crop=face&q=80" alt="Sarah" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">Sarah Mitchell</p>
+                            <p class="text-xs text-gray-400">Traveled to Santorini</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="reveal reveal-delay-2 testimonial-card bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">"Best travel platform I've ever used. The prices were unbeatable and the customer support team helped me change my flights last minute without any hassle. Highly recommend!"</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face&q=80" alt="James" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">James Rodriguez</p>
+                            <p class="text-xs text-gray-400">Traveled to Tokyo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="reveal reveal-delay-3 testimonial-card bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-1 mb-4">
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6">"Our family trip to Bali was a dream come true. The kids loved every activity they arranged. The attention to detail and personal touches made it truly special for us."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face&q=80" alt="Emily" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900">Emily Chen</p>
+                            <p class="text-xs text-gray-400">Traveled to Bali</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ CTA BANNER ============ -->
+    <section class="py-20 md:py-28 px-6 md:px-12 relative overflow-hidden">
+        <!-- Background image -->
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=1600&h=600&fit=crop&q=80" alt="Airplane" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gray-950/70"></div>
+        </div>
+
+        <div class="max-w-3xl mx-auto text-center relative z-10">
+            <div class="reveal">
+                <h2 class="text-3xl md:text-4xl font-bold text-white leading-tight">Ready to Start Your<br>Next Adventure?</h2>
+                <p class="text-white/70 mt-5 text-[15px] max-w-md mx-auto">Join over 50,000 travelers who have discovered their dream destinations with us. Your journey begins here.</p>
+                <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#" class="inline-block bg-white text-black font-medium rounded-full px-8 py-3.5 text-[15px] hover:scale-105 hover:shadow-xl transition-all duration-300">
+                        Book Your Trip Now
+                    </a>
+                    <a href="#" class="inline-block border border-white/60 text-white font-medium rounded-full px-8 py-3.5 text-[15px] hover:bg-white/10 transition-all duration-300">
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ NEWSLETTER ============ -->
+    <section class="py-16 md:py-20 px-6 md:px-12 bg-white">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="reveal">
+                <div class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-5">
+                    <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Stay in the Loop</h2>
+                <p class="text-gray-500 mt-3 text-[15px]">Subscribe to get exclusive deals, travel tips, and destination guides delivered to your inbox.</p>
+                
+                <!-- Newsletter Form -->
+                <div class="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <input type="email" placeholder="Enter your email address" class="flex-1 px-5 py-3.5 rounded-full border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    <button class="bg-blue-600 text-white font-medium rounded-full px-7 py-3.5 text-sm hover:bg-blue-700 hover:shadow-lg transition-all duration-300 cursor-pointer whitespace-nowrap">
+                        Subscribe
+                    </button>
+                </div>
+                <p class="text-gray-400 text-xs mt-4">No spam, unsubscribe anytime. We respect your privacy.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer id="footer" class="bg-gray-950 pt-16 pb-8 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+                <!-- Brand -->
+                <div class="lg:col-span-1">
+                    <h3 class="text-white font-semibold text-xl mb-4">Airlines</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Making world travel accessible, affordable, and stress-free since 2014.</p>
+                    <!-- Social Icons -->
+                    <div class="flex items-center gap-3">
+                        <a href="#" class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                        </a>
+                        <a href="#" class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                        <a href="#" class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                        </a>
+                        <a href="#" class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Company</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Press</a></li>
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Partners</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support Links -->
+                <div>
+                    <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Support</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Safety Info</a></li>
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Cancellation</a></li>
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">FAQs</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Contact</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-2 text-gray-400 text-sm">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            hello@airlines.com
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-400 text-sm">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                            +1 (555) 123-4567
+                        </li>
+                        <li class="flex items-start gap-2 text-gray-400 text-sm">
+                            <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            123 Sky Avenue, Suite 100<br>New York, NY 10001
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-gray-500 text-xs">© 2026 Airlines. All rights reserved.</p>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="text-gray-500 text-xs hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-500 text-xs hover:text-white transition-colors">Terms of Service</a>
+                    <a href="#" class="text-gray-500 text-xs hover:text-white transition-colors">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============ JAVASCRIPT ============ -->
+    <script>
+        // ===== Responsive Hero Font Sizes =====
+        function adjustFontSizes() {
+            const headline = document.getElementById('heroHeadline');
+            const subtext = document.getElementById('heroSubtext');
+            if (window.innerWidth >= 768) {
+                headline.style.fontSize = '56px';
+                subtext.style.fontSize = '18px';
+            } else {
+                headline.style.fontSize = '38px';
+                subtext.style.fontSize = '15px';
+            }
+        }
+        adjustFontSizes();
+        window.addEventListener('resize', adjustFontSizes);
+
+        // ===== Mobile Menu Toggle =====
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+
+        // ===== Navbar Scroll Effect =====
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 80) {
+                navbar.classList.add('nav-scrolled');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+            }
+        });
+
+        // ===== Scroll Reveal Animation =====
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ===== Counter Animation =====
+        const counters = document.querySelectorAll('.counter');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    const duration = 2000;
+                    const startTime = performance.now();
+
+                    function updateCounter(currentTime) {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        // Ease out cubic
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        counter.textContent = Math.floor(eased * target);
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.textContent = target;
+                        }
+                    }
+                    requestAnimationFrame(updateCounter);
+                    counterObserver.unobserve(counter);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => counterObserver.observe(counter));
+
+        // ===== Smooth Scroll for Anchor Links =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
