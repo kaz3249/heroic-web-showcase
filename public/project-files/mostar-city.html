@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mostar city</title>
+  <meta name="description" content="A cinematic three-screen scroll story for Mostar city." />
+  <link rel="icon" href="data:," />
+  
+  <style>
+    @font-face {
+      font-family: "Ogg Medium";
+      src: url("https://dcym8fthxf5uu.cloudfront.net/fonts/247a073c-29f5-4a89-aa3a-741020f346fc/OggText-Medium.woff2") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --mx: 0; --my: 0;
+      --back-opacity: 1; --back-x: 0px; --back-y: 0px; --back-scale: 0.76;
+      --four-y: 10vh; --four-scale: 0.78;
+      --bazaar-y: 20vh;
+      --blur-px: 0px; --back-brightness: 1;
+      --bazaar-blur-px: 0px; --bazaar-brightness: 1; --bazaar-saturation: 1;
+      --shade-opacity: 1; --shade-z: 2;
+      --shade-top-alpha: 0; --shade-mid-alpha: 0; --shade-bottom-alpha: 0;
+      --blur-tint: 74, 181, 224;
+      --title-y: 0px; --title-scale: 1; --title-opacity: 1;
+      --bridge-x: -50%; --bridge-y: 0px; --bridge-bottom: 5vh;
+      --bridge-width: 67.2vw; --bridge-scale: 1.02;
+      --split-left-x: -50%;  --split-left-y: 0px;  --split-left-scale: 1;
+      --split-right-x: -50%; --split-right-y: 0px; --split-right-scale: 1;
+      --frame2-opacity: 0; --frame2-x: -50%; --frame2-y: -50%; --frame2-scale: 1.06;
+      --intro-copy-y: 0px; --intro-copy-opacity: 1;
+      --panel2-opacity: 0; --panel2-y: calc(-50% + 58px);
+      --panel3-opacity: 0; --panel3-y: calc(-50% + 58px);
+      --sights-opacity: 0; --sights-controls-opacity: 0; --sights-y: 0px;
+      --sights-enter-x: 420vw; --sights-visibility: hidden;
+      --sights-shift: 0px; --sights-scale: 1;
+      --sights-top: clamp(112px, 19vh, 220px);
+      --sights-screen-top: clamp(112px, 19vh, 220px);
+      --ink: #111411; --paper: #fdf1e1; --shadow: rgba(0, 0, 0, 0.32);
+      font-family: Inter, Satoshi, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--paper);
+      background: #0b1110;
+      letter-spacing: 0;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; scroll-behavior: smooth; background: #0b1110; }
+    body { min-height: 100%; margin: 0; overflow-x: clip; background: #0b1110; }
+    button { border: 0; font: inherit; }
+    .site-shell { min-height: 100vh; }
+
+    .cinema-scroll { position: relative; height: calc(100vh + 3700px); }
+    .stage { position: sticky; top: 0; height: 100vh; min-height: 620px; overflow: hidden; isolation: isolate; background: #7fb4d4; }
+    .world, .back-stack, .sky-img, .shade, .scene-img, .site-header, .sights-slider, .sights-controls, .hero-title, .intro-copy, .story-panel { position: absolute; }
+    .world { inset: 0; overflow: hidden; background: #79b7dd; }
+
+    .site-header {
+      z-index: 10; top: 0; left: 0; right: 0;
+      display: grid; grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 1fr);
+      align-items: center; gap: 32px; padding: 32px;
+      color: rgba(253, 241, 225, 0.86); pointer-events: auto;
+    }
+    .site-logo {
+      justify-self: start; font-family: "Ogg Medium", serif; font-size: 24px; line-height: 1; font-weight: 500;
+      color: rgba(253, 241, 225, 0.92); text-decoration: none; white-space: nowrap;
+    }
+    .site-nav { display: flex; justify-content: center; gap: clamp(24px, 2.2vw, 44px); }
+    .site-nav a, .language-switcher {
+      color: rgba(253, 241, 225, 0.86); font-weight: 700; line-height: 1;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2); text-decoration: none;
+    }
+    .site-nav a { font-size: 20px; font-weight: 400; }
+    .language-switcher {
+      justify-self: end; display: inline-flex; align-items: center; gap: 5px;
+      padding: 0; background: transparent; font-size: 16px; cursor: pointer;
+    }
+    .language-switcher span { display: inline-flex; line-height: 1; }
+
+    .scene-img {
+      display: block; user-select: none; -webkit-user-drag: none;
+      will-change: transform, opacity, filter; pointer-events: none;
+    }
+
+    .sky-img {
+      z-index: 0; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: none;
+      filter: blur(var(--blur-px)) brightness(var(--back-brightness));
+    }
+
+    .back-stack {
+      z-index: 1; top: 0; bottom: 0; left: -3vw; right: -3vw;
+      opacity: var(--back-opacity);
+      transform: translate3d(var(--back-x), var(--back-y), 0) scale(var(--back-scale));
+      transform-origin: 50% 100%; will-change: transform, filter, opacity;
+    }
+    .back-img {
+      inset: 0; width: 100%; height: 100%; object-fit: cover;
+      filter: blur(var(--blur-px)) brightness(var(--back-brightness));
+    }
+    .back-bazaar, .back-four {
+      top: auto; bottom: 0; left: 48%; right: auto; width: 112%; height: auto; object-fit: contain;
+    }
+    .back-bazaar {
+      z-index: 3; opacity: 1;
+      filter: blur(var(--bazaar-blur-px)) brightness(var(--bazaar-brightness)) saturate(var(--bazaar-saturation));
+      transform: translate3d(-50%, var(--bazaar-y), 0) scale(0.86);
+    }
+    .back-four {
+      z-index: 1; opacity: 0.72; mix-blend-mode: screen;
+      transform: translate3d(-50%, calc(var(--four-y) - 110px), 0) scale(var(--four-scale));
+    }
+
+    .sights-slider {
+      z-index: 2; left: 0; right: 0; top: var(--sights-top); padding: 0;
+      opacity: 1; visibility: var(--sights-visibility);
+      transform: translate3d(var(--sights-enter-x), var(--sights-y), 0) scale(var(--sights-scale));
+      transform-origin: 0 0; pointer-events: auto; will-change: transform;
+    }
+    .sights-track {
+      display: flex; gap: clamp(16px, 1.15vw, 24px); align-items: stretch;
+      transform: translate3d(calc(var(--sights-shift) - 18vw), 0, 0);
+      transition: transform 640ms cubic-bezier(0.22, 1, 0.36, 1); will-change: transform;
+    }
+    .sights-track.is-jumping { transition: none; }
+
+    .sight-card {
+      position: relative; flex: 0 0 clamp(360px, 19.4vw, 430px); height: 220px; padding: 24px;
+      overflow: hidden; border: 1px solid rgba(253, 241, 225, 0.42); border-radius: 24px;
+      color: #000; background: #fdf1e1; box-shadow: 0 18px 52px rgba(2, 47, 64, 0.12);
+      backdrop-filter: none; cursor: pointer; pointer-events: auto; user-select: none;
+    }
+    .sight-card::before, .sight-card::after { content: none; }
+    .sight-card :is(.sight-kicker, h3, p) { text-shadow: none; position: relative; z-index: 1; }
+    .sight-card:focus-visible, .sight-card.is-active { outline: none; }
+
+    .sight-kicker {
+      display: block; margin-bottom: 56px; color: #000; font-size: 12px;
+      font-weight: 500; line-height: 1.05; text-transform: uppercase;
+    }
+    .sight-pin {
+      position: absolute; top: 24px; right: 24px; width: 67.2px; height: 67.2px; pointer-events: none;
+    }
+    .sight-card h3 {
+      position: absolute; left: 24px; right: 24px; bottom: calc(24px + (16px * 1.16 * 2) + 12px);
+      max-width: calc(100% - 76px); margin: 0; color: #000; font-size: 24px; font-weight: 800;
+      line-height: 0.95; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .sight-card p {
+      position: absolute; left: 24px; right: 24px; bottom: 24px; max-width: 100%; margin: 12px 0 0;
+      color: #000; font-size: 16px; font-weight: 400; line-height: 1.16; display: -webkit-box;
+      max-height: calc(2em * 1.16); overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+    }
+
+    .sights-controls {
+      z-index: 5; left: 48px; right: auto; top: calc(var(--sights-screen-top) + 220px + 16px);
+      display: flex; justify-content: flex-start; gap: 14px;
+      opacity: var(--sights-controls-opacity); transform: translate3d(0, var(--sights-y), 0);
+      pointer-events: none; will-change: transform, opacity;
+    }
+    .sights-controls.is-ready { pointer-events: auto; }
+    .sight-nav {
+      width: 54px; height: 54px; display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 999px; color: #111411; background: rgba(253, 241, 225, 0.94);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.2); cursor: pointer;
+    }
+
+    .hero-title {
+      z-index: 3; left: 50%; top: clamp(122px, 19vh, 205px); width: min(94vw, 1780px); margin: 0;
+      color: #fdf1e1; font-family: "Ogg Medium", serif; font-size: 14rem; font-weight: 500;
+      line-height: 0.78; text-align: center; text-shadow: none;
+      transform: translate3d(-50%, var(--title-y), 0) scale(var(--title-scale));
+      opacity: var(--title-opacity); will-change: transform, opacity;
+    }
+
+    .bridge-img {
+      z-index: 4; left: 50%; bottom: var(--bridge-bottom); width: min(var(--bridge-width), 2140px); height: auto;
+      transform: translate3d(var(--bridge-x), var(--bridge-y), 0) scale(var(--bridge-scale));
+      transform-origin: 50% 48%;
+    }
+
+    .splitframe-img {
+      z-index: 6; left: 50%; bottom: -2vh; width: min(118vw, 2240px); height: auto; pointer-events: none;
+    }
+    .splitframe-left {
+      transform: translate3d(var(--split-left-x), var(--split-left-y), 0) scale(var(--split-left-scale));
+      transform-origin: 21% 52%;
+    }
+    .splitframe-right {
+      transform: translate3d(var(--split-right-x), var(--split-right-y), 0) scale(var(--split-right-scale));
+      transform-origin: 79% 52%;
+    }
+
+    .frame-two-img {
+      z-index: 5; filter: none !important; backdrop-filter: none; left: 50%; top: 50%;
+      width: min(122vw, 2160px); height: auto; opacity: var(--frame2-opacity);
+      transform: translate3d(var(--frame2-x), var(--frame2-y), 0) scale(var(--frame2-scale));
+      transform-origin: 50% 48%;
+    }
+
+    .shade {
+      inset: 0; z-index: var(--shade-z); pointer-events: none; opacity: var(--shade-opacity);
+      background: linear-gradient(180deg,
+        rgba(var(--blur-tint), var(--shade-top-alpha)) 0%,
+        rgba(var(--blur-tint), var(--shade-mid-alpha)) 48%,
+        rgba(var(--blur-tint), var(--shade-bottom-alpha)) 100%);
+    }
+
+    .intro-copy {
+      z-index: 9; left: 50%; bottom: clamp(56px, 28vh, 400px); width: min(560px, calc(100vw - 40px));
+      text-align: center; transform: translate3d(-50%, var(--intro-copy-y), 0);
+      opacity: var(--intro-copy-opacity); will-change: transform, opacity;
+    }
+    .intro-copy p {
+      margin: 0 auto; max-width: 560px; color: #fdf1e1; font-size: 1.18rem; font-weight: 500;
+      line-height: 1.18; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.42);
+    }
+    .hero-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 26px; }
+    .hero-tags span {
+      min-height: 42px; display: inline-flex; align-items: center; padding: 0 25px;
+      color: var(--ink); border-radius: 999px; background: #fdf1e1; font-size: 0.98rem;
+      font-weight: 500; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    .story-panel {
+      z-index: 10; left: 50%; top: 45%; width: min(760px, calc(100vw - 42px));
+      text-align: center; pointer-events: none; transform: translate3d(-50%, -50%, 0);
+      will-change: transform, opacity;
+    }
+    .story-panel h2 {
+      margin: 0; color: #fdf1e1; font-family: "Ogg Medium", serif; font-size: 4.75rem;
+      font-weight: 500; line-height: 0.95; text-shadow: 0 16px 38px var(--shadow);
+    }
+    .story-panel p {
+      width: min(520px, 100%); margin: 26px auto 0; color: #fdf1e1; font-size: 1.14rem;
+      font-weight: 500; line-height: 1.18; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.42);
+    }
+    .story-panel-bridge {
+      top: 60%; opacity: var(--panel2-opacity); transform: translate3d(-50%, var(--panel2-y), 0);
+    }
+    .story-panel-bazaar {
+      top: 29%; opacity: var(--panel3-opacity); transform: translate3d(-50%, var(--panel3-y), 0);
+    }
+    .facts {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 86px;
+      width: min(470px, 100%); margin: 72px auto 0;
+    }
+    .facts dt {
+      color: #fdf1e1; font-family: "Ogg Medium", serif; font-size: 4.2rem;
+      font-weight: 500; line-height: 0.9; text-shadow: 0 14px 34px var(--shadow);
+    }
+    .facts dd {
+      margin: 18px 0 0; color: #fdf1e1; font-size: 1rem; font-weight: 500;
+      line-height: 1.14; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.42);
+    }
+    .note-button {
+      min-height: 50px; margin-top: 28px; display: inline-flex; align-items: center; justify-content: center;
+      gap: 12px; padding: 0 28px; border-radius: 999px; color: var(--ink); background: #fdf1e1;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18); pointer-events: auto; cursor: pointer;
+    }
+    .note-button span:first-child { font-size: 1.25rem; line-height: 1; }
+
+    @media (max-width: 1500px) {
+      .hero-title { font-size: 11rem; }
+      .story-panel h2 { font-size: 4.1rem; }
+    }
+
+    @media (max-width: 1100px) {
+      .hero-title { top: 15vh; font-size: 7.5rem; }
+      .bridge-img { width: 138vw; }
+      .frame-two-img { width: 132vw; }
+      .story-panel h2 { font-size: 3.2rem; }
+      .facts { gap: 34px; margin-top: 44px; }
+      .facts dt { font-size: 3.2rem; }
+      .sight-card { flex-basis: clamp(320px, 40vw, 390px); min-height: 178px; }
+    }
+
+    @media (max-width: 640px) {
+      .stage { min-height: 640px; }
+      .site-header { grid-template-columns: 1fr auto; gap: 18px; padding: 24px; }
+      .site-nav {
+        grid-column: 1 / -1; grid-row: 2; justify-content: flex-start;
+        gap: 18px; overflow-x: auto; scrollbar-width: none;
+      }
+      .site-nav::-webkit-scrollbar { display: none; }
+      .hero-title { top: 16vh; font-size: 4.5rem; }
+      .bridge-img { bottom: 2vh; width: 190vw; }
+      .frame-two-img { width: 176vw; }
+      .intro-copy { bottom: 42px; }
+      .intro-copy p, .story-panel p { font-size: 1rem; }
+      .hero-tags { gap: 8px; }
+      .hero-tags span { min-height: 38px; padding: 0 16px; font-size: 0.88rem; }
+      .story-panel { top: 42%; }
+      .story-panel-bazaar { top: 26%; }
+      .story-panel h2 { font-size: 2.45rem; }
+      .facts { gap: 18px; margin-top: 34px; }
+      .facts dt { font-size: 2.5rem; }
+      .sights-slider { padding: 0; }
+      .sights-track { gap: 12px; transform: translate3d(calc(var(--sights-shift) - 18vw), 0, 0); }
+      .sight-card { flex-basis: min(82vw, 330px); height: 220px; padding: 24px; border-radius: 24px; }
+      .sights-controls { top: calc(var(--sights-screen-top) + 236px); }
+      .sight-card h3 { max-width: 78%; }
+      .sight-card p { max-width: 100%; margin-top: 10px; }
+      .sight-kicker { margin-bottom: 56px; }
+      .sight-pin { top: 24px; right: 24px; width: 57.6px; height: 57.6px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .scene-img, .back-stack, .hero-title, .intro-copy,
+      .story-panel, .sights-track, .sights-slider { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="site-shell">
+    <section class="cinema-scroll" id="cinema" aria-label="Mostar cinematic scroll story">
+      <div class="stage">
+        <div class="world">
+          <img class="scene-img sky-img" src="https://raft-blast-61784561.figma.site/_assets/v11/16b5007d9c93971e26ffe4e0e3e37946f6bd538c.png" alt="" />
+          <header class="site-header" aria-label="Primary navigation">
+            <a class="site-logo" href="#cinema">Bosnia and Herzegovina</a>
+            <nav class="site-nav" aria-label="Main menu">
+              <a href="#cinema">Intro</a>
+              <a href="#bridge">Bridge</a>
+              <a href="#bazaar">Bazaar</a>
+              <a href="#routes">Routes</a>
+            </nav>
+            <button class="language-switcher" aria-label="Change language">
+              <span>EN</span>
+              <span aria-hidden="true">⌄</span>
+            </button>
+          </header>
+          <div class="back-stack">
+            <img class="scene-img back-img back-four" src="https://raft-blast-61784561.figma.site/_assets/v11/8a7f8af50e0ce92ec2e228e7b0b4112178c51cf1.png" alt="" />
+            <section class="sights-slider" aria-label="Mostar sights slider">
+              <div class="sights-track">
+                <article class="sight-card" tabindex="0" role="button" aria-label="Open Stari Most card">
+                  <span class="sight-kicker">Old Bridge</span>
+                  <img class="sight-pin" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_230438_d526b8b6-8a2e-4e3b-9993-3908acae03a7.png" alt="" />
+                  <h3>Stari Most</h3>
+                  <p>The stone arch over the Neretva and Mostar's main landmark.</p>
+                </article>
+                <article class="sight-card" tabindex="0" role="button" aria-label="Open Kujundziluk card">
+                  <span class="sight-kicker">Bazaar Street</span>
+                  <img class="sight-pin" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_230442_140bc25b-b165-4249-904a-f708bff6970e.png" alt="" />
+                  <h3>Kujundziluk</h3>
+                  <p>Copper shops, souvenirs, and the old bazaar lane by the bridge.</p>
+                </article>
+                <article class="sight-card" tabindex="0" role="button" aria-label="Open Koski Mehmed Pasha Mosque card">
+                  <span class="sight-kicker">Viewpoint</span>
+                  <img class="sight-pin" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_230448_825949c9-ccdb-4857-b4a6-e349eccc9010.png" alt="" />
+                  <h3>Koski Mehmed Pasha Mosque</h3>
+                  <p>A classic minaret view back toward Stari Most and the river.</p>
+                </article>
+                <article class="sight-card" tabindex="0" role="button" aria-label="Open Kajtaz House card">
+                  <span class="sight-kicker">Ottoman House</span>
+                  <img class="sight-pin" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_230438_d526b8b6-8a2e-4e3b-9993-3908acae03a7.png" alt="" />
+                  <h3>Kajtaz House</h3>
+                  <p>A preserved residential house showing Mostar's Ottoman layers.</p>
+                </article>
+                <article class="sight-card" tabindex="0" role="button" aria-label="Open War Photo Exhibition card">
+                  <span class="sight-kicker">Museum</span>
+                  <img class="sight-pin" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_230442_140bc25b-b165-4249-904a-f708bff6970e.png" alt="" />
+                  <h3>War Photo Exhibition</h3>
+                  <p>A compact, moving stop for context on the city's recent history.</p>
+                </article>
+              </div>
+            </section>
+            <img class="scene-img back-img back-bazaar" src="https://raft-blast-61784561.figma.site/_assets/v11/864afe00e41e2fa20a5aa546e15cb807e0f81384.png" alt="" />
+          </div>
+          <div class="sights-controls" aria-label="Slider controls">
+            <button class="sight-nav sight-prev" aria-label="Previous sight">←</button>
+            <button class="sight-nav sight-next" aria-label="Next sight">→</button>
+          </div>
+          <h1 class="hero-title">MOSTAR</h1>
+          <img class="scene-img splitframe-img splitframe-left" src="https://raft-blast-61784561.figma.site/_assets/v11/7536d7b60a1fce482cf6edf3f0bffd3bad5d0f8a.png" alt="" />
+          <img class="scene-img splitframe-img splitframe-right" src="https://raft-blast-61784561.figma.site/_assets/v11/392db6a6a6b98e868bd7f8d3f55bb719d51e5028.png" alt="" />
+          <img class="scene-img bridge-img" src="https://raft-blast-61784561.figma.site/_assets/v11/c6a6d8ef49bca43f708aa852692942c45ec950d4.png" alt="" />
+          <img class="scene-img frame-two-img" src="https://raft-blast-61784561.figma.site/_assets/v11/ba75252bab2b1c510987b74837770f7bc8a6b2d4.png" alt="" />
+          <div class="shade"></div>
+        </div>
+        <section class="intro-copy" aria-label="Mostar overview">
+          <p>A stone arch, emerald water, and a compact old city made for slow mornings, late light, and one unforgettable crossing.</p>
+          <div class="hero-tags" aria-label="Mostar highlights">
+            <span>Old Bridge</span>
+            <span>Neretva River</span>
+            <span>UNESCO old city</span>
+          </div>
+        </section>
+        <section class="story-panel story-panel-bridge" aria-label="Old Bridge details">
+          <h2>The bridge is the city's compass.</h2>
+          <p>Stari Most links the banks of the Neretva and anchors a historic quarter shaped by Ottoman, Mediterranean, and European layers.</p>
+          <dl class="facts">
+            <div>
+              <dt>1566</dt>
+              <dd>Original bridge completed</dd>
+            </div>
+            <div>
+              <dt>2005</dt>
+              <dd>Old Bridge Area inscribed by UNESCO</dd>
+            </div>
+          </dl>
+        </section>
+        <section class="story-panel story-panel-bazaar" aria-label="Old town details">
+          <h2>The bazaar keeps Mostar close.</h2>
+          <p>Stone lanes, mosque courtyards, copper stalls, and riverside coffee stay within a short walk of Stari Most.</p>
+          <button class="note-button">
+            <span aria-hidden="true">↗</span>
+            <span>Open old town notes</span>
+          </button>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const section = document.querySelector('.cinema-scroll');
+    const html = document.documentElement;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const track = document.querySelector('.sights-track');
+    const sightsControls = document.querySelector('.sights-controls');
+    const sightPrev = document.querySelector('.sight-prev');
+    const sightNext = document.querySelector('.sight-next');
+    const originalCards = Array.from(document.querySelectorAll('.sight-card'));
+
+    let targetMouseX = 0, mouseY = 0, mouseX = 0, targetMouseY = 0;
+    let targetScroll = 0, smoothScroll = 0;
+    let initialized = false, rafPending = false;
+    let sightCards = [];
+    let originalSightCount = originalCards.length;
+    let activeSight = originalSightCount;
+
+    const clamp = (v, min = 0, max = 1) => Math.min(max, Math.max(min, v));
+    const smoothstep = (e0, e1, v) => { const x = clamp((v - e0) / (e1 - e0)); return x * x * (3 - 2 * x); };
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const segmentInOut = (s, a, b, c, d) => {
+      const enter = smoothstep(a, b, s), exit = smoothstep(c, d, s);
+      return { enter, exit, active: enter * (1 - exit) };
+    };
+    const getScrollDistance = () => clamp(-section.getBoundingClientRect().top, 0, section.offsetHeight - window.innerHeight);
+
+    function requestTick() {
+      if (!rafPending) {
+        rafPending = true;
+        requestAnimationFrame(update);
+      }
+    }
+
+    function update() {
+      rafPending = false;
+      targetScroll = getScrollDistance();
+      if (!initialized || reduceMotion.matches) {
+        smoothScroll = targetScroll;
+        initialized = true;
+      } else {
+        smoothScroll = lerp(smoothScroll, targetScroll, 0.14);
+      }
+      if (Math.abs(smoothScroll - targetScroll) < 0.08) smoothScroll = targetScroll;
+
+      mouseX = lerp(mouseX, targetMouseX, 0.12);
+      mouseY = lerp(mouseY, targetMouseY, 0.12);
+
+      const frame2 = segmentInOut(smoothScroll, 560, 900, 1300, 1620);
+      const frame3 = segmentInOut(smoothScroll, 1760, 2140, 2540, 2700);
+      const progress = clamp(smoothScroll / 2700);
+      const introExit = smoothstep(90, 650, smoothScroll);
+      const sightsEnterRaw = smoothstep(2760, 3560, smoothScroll);
+      const sightsEnter = Math.pow(sightsEnterRaw, 1.55);
+      const sightsControlsEnter = smoothstep(3360, 3660, smoothScroll);
+      const blurActive = clamp(frame2.active + frame3.active);
+      const frame2Opacity = frame2.active * (1 - frame3.enter);
+      const splitDrift = Math.pow(frame2.enter, 1.5);
+      const panel2Opacity = frame2.active * (1 - frame2.exit);
+      const panel3Opacity = frame3.active * (1 - frame3.exit);
+      const backScale = 0.76 + progress * 0.2 + frame2.enter * 0.18 + frame3.enter * 0.16;
+      const sharedHeroY = progress * -74;
+      const sharedHeroScale = progress * 0.23;
+      const sightsScreenTop = Math.min(220, Math.max(112, window.innerHeight * 0.19)) - 50;
+      const sightsParentTop = window.innerHeight - (window.innerHeight - sightsScreenTop) / backScale;
+
+      const root = document.documentElement;
+      const setVar = (name, val) => root.style.setProperty(name, val);
+
+      setVar('--mx', reduceMotion.matches ? "0" : mouseX.toFixed(4));
+      setVar('--my', reduceMotion.matches ? "0" : mouseY.toFixed(4));
+      setVar('--back-opacity', 1 - frame2.active * 0.06);
+      setVar('--back-x', `${mouseX * -12}px`);
+      setVar('--back-y', `${mouseY * -4}px`);
+      setVar('--back-scale', backScale);
+      setVar('--four-y', `${10 + progress * 10}vh`);
+      setVar('--four-scale', 0.78 + progress * 0.16);
+      setVar('--bazaar-y', `${20 - progress * 8}vh`);
+      setVar('--blur-px', `${blurActive * 14}px`);
+      setVar('--back-brightness', 1 - blurActive * 0.255);
+      setVar('--bazaar-blur-px', `${frame2.active * 14}px`);
+      setVar('--bazaar-brightness', 1 - frame2.active * 0.255 - frame3.active * 0.06);
+      setVar('--bazaar-saturation', 1 + frame3.active * 0.18);
+      setVar('--shade-opacity', "1");
+      setVar('--shade-z', frame2.active > 0.02 ? "2" : "0");
+      setVar('--shade-top-alpha', blurActive * 0.465);
+      setVar('--shade-mid-alpha', blurActive * 0.42);
+      setVar('--shade-bottom-alpha', blurActive * 0.51);
+
+      setVar('--title-y', `${introExit * -210}px`);
+      setVar('--title-scale', 1 - introExit * 0.08);
+      setVar('--title-opacity', 1 - introExit);
+
+      setVar('--bridge-x', `calc(-50% + ${mouseX * 18}px)`);
+      setVar('--bridge-y', `${mouseY * 8 + sharedHeroY - frame2.exit * 760}px`);
+      setVar('--bridge-bottom', `${5 - frame2.enter * 13}vh`);
+      setVar('--bridge-width', `${67.2 + frame2.enter * 37.8}vw`);
+      setVar('--bridge-scale', 1.02 + sharedHeroScale + frame2.exit * 0.46);
+
+      setVar('--split-left-x', `calc(-50% + ${-splitDrift * 46}vw + ${mouseX * 22}px)`);
+      setVar('--split-left-y', `${mouseY * 10 + sharedHeroY - splitDrift * 180}px`);
+      setVar('--split-left-scale', 1 + sharedHeroScale + frame2.enter * 0.74);
+      setVar('--split-right-x', `calc(-50% + ${splitDrift * 46}vw + ${mouseX * 22}px)`);
+      setVar('--split-right-y', `${mouseY * 10 + sharedHeroY - splitDrift * 180}px`);
+      setVar('--split-right-scale', 1 + sharedHeroScale + frame2.enter * 0.74);
+
+      setVar('--frame2-opacity', frame2Opacity);
+      setVar('--frame2-x', `calc(-50% + ${mouseX * 10}px)`);
+      setVar('--frame2-y', `calc(-50% + ${mouseY * 8 - frame2.exit * 150}px)`);
+      setVar('--frame2-scale', 1.06 + frame2.enter * 0.08 + frame2.exit * 0.08);
+
+      setVar('--intro-copy-y', `${introExit * 90}px`);
+      setVar('--intro-copy-opacity', 1 - introExit);
+      setVar('--panel2-opacity', panel2Opacity);
+      setVar('--panel2-y', `calc(-50% + ${-frame2.exit * 86 + (1 - frame2.enter) * 58}px)`);
+      setVar('--panel3-opacity', panel3Opacity);
+      setVar('--panel3-y', `calc(-50% + ${-frame3.exit * 86 + (1 - frame3.enter) * 58}px)`);
+
+      setVar('--sights-opacity', sightsEnter);
+      setVar('--sights-controls-opacity', sightsControlsEnter);
+      sightsControls.classList.toggle("is-ready", sightsControlsEnter > 0.98);
+      setVar('--sights-visibility', sightsEnter > 0.01 ? "visible" : "hidden");
+      setVar('--sights-y', "0px");
+      setVar('--sights-enter-x', `${(1 - sightsEnter) * 420}vw`);
+      setVar('--sights-scale', 1 / backScale);
+      setVar('--sights-top', `${sightsParentTop}px`);
+      setVar('--sights-screen-top', `${sightsScreenTop}px`);
+
+      if (Math.abs(smoothScroll - targetScroll) > 0.08 || Math.abs(mouseX - targetMouseX) > 0.001 || Math.abs(mouseY - targetMouseY) > 0.001) {
+        requestTick();
+      }
+    }
+
+    function setupSightSlider() {
+      track.replaceChildren();
+      for (let setIndex = 0; setIndex < 3; setIndex++) {
+        originalCards.forEach((card, cardIndex) => {
+          const clone = card.cloneNode(true);
+          clone.dataset.sightIndex = setIndex * originalSightCount + cardIndex;
+          track.appendChild(clone);
+        });
+      }
+      sightCards = Array.from(track.querySelectorAll('.sight-card'));
+      activeSight = originalSightCount;
+      sightCards.forEach(card => {
+        card.addEventListener('click', () => selectSightCard(card));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectSightCard(card);
+          }
+        });
+      });
+      track.addEventListener('transitionend', normalizeSightSlider);
+      updateSightSlider();
+    }
+
+    function updateSightSlider() {
+      const cardWidth = sightCards[0].offsetWidth;
+      const gap = parseFloat(getComputedStyle(track).columnGap || "0");
+      document.documentElement.style.setProperty('--sights-shift', `${-(cardWidth + gap) * activeSight}px`);
+      sightCards.forEach((card, index) => {
+        if (index === activeSight) {
+          card.classList.add('is-active');
+        } else {
+          card.classList.remove('is-active');
+        }
+      });
+    }
+
+    function moveSightSlider(dir) {
+      activeSight += dir;
+      updateSightSlider();
+    }
+
+    function selectSightCard(card) {
+      const index = Number(card.dataset.sightIndex);
+      if (Number.isFinite(index)) {
+        activeSight = index;
+        updateSightSlider();
+      }
+    }
+
+    function jumpSightSlider(i) {
+      track.classList.add('is-jumping');
+      activeSight = i;
+      updateSightSlider();
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          track.classList.remove('is-jumping');
+        });
+      });
+    }
+
+    function normalizeSightSlider() {
+      if (activeSight >= originalSightCount * 2) {
+        jumpSightSlider(activeSight - originalSightCount);
+      } else if (activeSight < originalSightCount) {
+        jumpSightSlider(activeSight + originalSightCount);
+      }
+    }
+
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', () => {
+      updateSightSlider();
+      requestTick();
+    });
+    window.addEventListener('pointermove', (e) => {
+      targetMouseX = e.clientX / window.innerWidth - 0.5;
+      targetMouseY = e.clientY / window.innerHeight - 0.5;
+      requestTick();
+    }, { passive: true });
+
+    sightPrev.addEventListener('click', () => moveSightSlider(-1));
+    sightNext.addEventListener('click', () => moveSightSlider(1));
+
+    window.addEventListener('load', () => {
+      setupSightSlider();
+      requestTick();
+    });
+  </script>
+</body>
+</html>

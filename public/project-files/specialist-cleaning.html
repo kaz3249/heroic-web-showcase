@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="htmlRoot">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الأخصائي لخدمات النظافة والتشطيب | Specialist Cleaning & Finishing – Khartoum</title>
+  <meta name="description" content="شركة الأخصائي لخدمات النظافة والتشطيب في الخرطوم – تنظيف عميق، تلميع رخام، غسيل كنب، صيانة أبواب. احجز الآن عبر واتساب." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* ===================== CSS VARIABLES ===================== */
+    :root {
+      --black:       #111111;
+      --black-2:     #1a1a1a;
+      --black-3:     #0d0d0d;
+      --gold:        #D4AF37;
+      --gold-light:  #E5C158;
+      --gold-dark:   #b8960c;
+      --white:       #FFFFFF;
+      --gray-light:  #f5f5f5;
+      --gray-mid:    #aaaaaa;
+      --gray-text:   #cccccc;
+      --whatsapp:    #25D366;
+      --radius:      16px;
+      --radius-sm:   8px;
+      --shadow-gold: 0 8px 32px rgba(212,175,55,0.25);
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+      --transition:  all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ===================== RESET ===================== */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    html[dir="rtl"] body { font-family: 'Cairo', sans-serif; }
+
+    h1,h2,h3,h4 { font-family: 'Playfair Display', serif; color: var(--gold); line-height:1.2; }
+    html[dir="rtl"] h1,html[dir="rtl"] h2,html[dir="rtl"] h3,html[dir="rtl"] h4 { font-family:'Cairo',sans-serif; }
+
+    a { text-decoration:none; color:inherit; }
+    ul { list-style:none; }
+    img { display:block; max-width:100%; }
+    button { cursor:pointer; border:none; font-family:inherit; }
+
+    /* ===================== UTILITIES ===================== */
+    .container { max-width:1200px; margin:0 auto; padding:0 24px; }
+    .section-pad { padding: 90px 0; }
+    .text-center { text-align:center; }
+    .gold-text { color: var(--gold); }
+    .muted { color: var(--gray-text); }
+
+    /* Section Header */
+    .sec-header { text-align:center; margin-bottom:60px; }
+    .sec-header .eyebrow {
+      display:inline-block;
+      font-size:.75rem;
+      font-weight:600;
+      letter-spacing:3px;
+      text-transform:uppercase;
+      color:var(--gold);
+      border:1px solid var(--gold);
+      padding:4px 16px;
+      border-radius:50px;
+      margin-bottom:16px;
+    }
+    .sec-header h2 { font-size:clamp(1.8rem,4vw,2.8rem); margin-bottom:14px; }
+    .sec-header p { color:var(--gray-text); max-width:560px; margin:0 auto; font-size:.95rem; }
+    .gold-line { width:60px; height:3px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); margin:16px auto 0; border-radius:2px; }
+
+    /* Buttons */
+    .btn {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:14px 32px; border-radius:50px;
+      font-weight:600; font-size:.95rem;
+      transition: var(--transition); white-space:nowrap;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+      color: var(--black); box-shadow: var(--shadow-gold);
+    }
+    .btn-gold:hover { transform:translateY(-3px); box-shadow:0 14px 40px rgba(212,175,55,0.45); }
+    .btn-outline {
+      border:2px solid var(--gold); color:var(--gold); background:transparent;
+    }
+    .btn-outline:hover { background:var(--gold); color:var(--black); transform:translateY(-3px); }
+    .btn-wa {
+      background:var(--whatsapp); color:#fff;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    }
+    .btn-wa:hover { background:#1ebe5a; transform:translateY(-3px); box-shadow:0 10px 30px rgba(37,211,102,0.5); }
+
+    /* ===================== ANNOUNCEMENT BAR ===================== */
+    .announce-bar {
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+      color: var(--black);
+      text-align:center;
+      padding:8px 16px;
+      font-size:.8rem;
+      font-weight:600;
+      letter-spacing:.5px;
+    }
+    .announce-bar i { margin-right:6px; }
+    html[dir="rtl"] .announce-bar i { margin-right:0; margin-left:6px; }
+
+    /* ===================== HEADER ===================== */
+    header {
+      position:fixed; top:0; left:0; right:0; z-index:999;
+      background: rgba(17,17,17,0.97);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(212,175,55,0.15);
+      transition: var(--transition);
+    }
+    header.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+    .header-inner {
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 24px; max-width:1200px; margin:0 auto;
+    }
+
+    /* Logo */
+    .logo { display:flex; align-items:center; gap:10px; }
+    .logo-icon {
+      width:44px; height:44px;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+      border-radius:10px; display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; color:var(--black); flex-shrink:0;
+      box-shadow: 0 0 12px rgba(212,175,55,0.4);
+    }
+    .logo-text-wrap { display:flex; flex-direction:column; line-height:1.1; }
+    .logo-name { font-size:.95rem; font-weight:700; color:var(--gold); font-family:'Playfair Display',serif; }
+    html[dir="rtl"] .logo-name { font-family:'Cairo',sans-serif; }
+    .logo-sub { font-size:.6rem; color:var(--gray-mid); letter-spacing:1px; text-transform:uppercase; }
+
+    /* Nav */
+    .nav-links { display:flex; align-items:center; gap:28px; }
+    .nav-links a {
+      font-size:.88rem; font-weight:500; color:var(--gray-text);
+      position:relative; transition:var(--transition);
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:-4px; left:0;
+      width:0; height:2px; background:var(--gold); transition:var(--transition);
+    }
+    html[dir="rtl"] .nav-links a::after { left:auto; right:0; }
+    .nav-links a:hover { color:var(--gold); }
+    .nav-links a:hover::after { width:100%; }
+
+    .header-actions { display:flex; align-items:center; gap:12px; }
+    .lang-btn {
+      background:transparent; border:1px solid rgba(212,175,55,0.5);
+      color:var(--gold); padding:6px 14px; border-radius:50px;
+      font-size:.78rem; font-weight:600; transition:var(--transition);
+    }
+    .lang-btn:hover { background:var(--gold); color:var(--black); }
+    .header-cta { display:flex; }
+
+    /* Hamburger */
+    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
+    .hamburger span { display:block; width:24px; height:2px; background:var(--gold); border-radius:2px; transition:var(--transition); }
+    .hamburger.open span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+    .hamburger.open span:nth-child(2) { opacity:0; }
+    .hamburger.open span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
+
+    /* Mobile Nav */
+    .mobile-nav {
+      display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+      background:rgba(17,17,17,0.98); z-index:998;
+      flex-direction:column; align-items:center; justify-content:center; gap:32px;
+    }
+    .mobile-nav.open { display:flex; }
+    .mobile-nav a { font-size:1.4rem; font-weight:600; color:var(--white); transition:var(--transition); }
+    .mobile-nav a:hover { color:var(--gold); }
+    .mobile-nav-close { position:absolute; top:24px; right:24px; font-size:1.8rem; color:var(--gold); cursor:pointer; }
+    html[dir="rtl"] .mobile-nav-close { right:auto; left:24px; }
+
+    /* ===================== HERO ===================== */
+    .hero {
+      min-height:100vh; display:flex; align-items:center;
+      position:relative; overflow:hidden; padding-top:80px;
+    }
+    .hero-bg {
+      position:absolute; inset:0;
+      background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80') center/cover no-repeat;
+    }
+    .hero-overlay {
+      position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(17,17,17,0.92) 0%, rgba(17,17,17,0.75) 50%, rgba(17,17,17,0.88) 100%);
+    }
+    .hero-glow {
+      position:absolute; top:-200px; right:-200px;
+      width:600px; height:600px; border-radius:50%;
+      background: radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .hero-content { position:relative; z-index:2; max-width:720px; }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3);
+      color:var(--gold); padding:6px 16px; border-radius:50px;
+      font-size:.78rem; font-weight:600; margin-bottom:24px;
+      animation: fadeInUp 0.6s ease both;
+    }
+    .hero-badge i { font-size:.7rem; }
+    .hero h1 {
+      font-size: clamp(2rem, 5.5vw, 3.8rem);
+      margin-bottom:20px; line-height:1.15;
+      animation: fadeInUp 0.7s 0.1s ease both;
+    }
+    .hero h1 em { font-style:italic; color:var(--gold-light); }
+    .hero-desc {
+      font-size:clamp(.95rem,2vw,1.1rem); color:var(--gray-text);
+      margin-bottom:36px; max-width:560px;
+      animation: fadeInUp 0.7s 0.2s ease both;
+    }
+    .hero-btns { display:flex; flex-wrap:wrap; gap:14px; animation: fadeInUp 0.7s 0.3s ease both; }
+    .hero-trust {
+      display:flex; align-items:center; gap:20px; margin-top:40px;
+      animation: fadeInUp 0.7s 0.4s ease both;
+    }
+    .trust-item { display:flex; align-items:center; gap:8px; font-size:.82rem; color:var(--gray-mid); }
+    .trust-item i { color:var(--gold); font-size:.9rem; }
+    .trust-divider { width:1px; height:20px; background:rgba(255,255,255,0.15); }
+
+    @keyframes fadeInUp {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ===================== TRUST STRIP ===================== */
+    .trust-strip {
+      background: var(--black-2);
+      border-top: 1px solid rgba(212,175,55,0.1);
+      border-bottom: 1px solid rgba(212,175,55,0.1);
+      padding: 28px 0;
+    }
+    .trust-strip-inner {
+      display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:20px;
+    }
+    .trust-stat { text-align:center; }
+    .trust-stat .num { font-size:1.8rem; font-weight:700; color:var(--gold); font-family:'Playfair Display',serif; }
+    html[dir="rtl"] .trust-stat .num { font-family:'Cairo',sans-serif; }
+    .trust-stat .lbl { font-size:.75rem; color:var(--gray-mid); margin-top:2px; }
+
+    /* ===================== SERVICES ===================== */
+    .services-section { background: var(--black); }
+    .services-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap:24px;
+    }
+    .service-card {
+      background: var(--black-2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      overflow:hidden;
+      transition: var(--transition);
+      position:relative;
+    }
+    .service-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+      transform:scaleX(0); transform-origin:left; transition:var(--transition);
+    }
+    html[dir="rtl"] .service-card::before { transform-origin:right; }
+    .service-card:hover { transform:translateY(-8px); border-color:rgba(212,175,55,0.3); box-shadow:var(--shadow-card); }
+    .service-card:hover::before { transform:scaleX(1); }
+    .service-img-wrap { height:180px; overflow:hidden; position:relative; }
+    .service-img-wrap img { width:100%; height:100%; object-fit:cover; transition:var(--transition); }
+    .service-card:hover .service-img-wrap img { transform:scale(1.06); }
+    .service-img-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(to top, rgba(17,17,17,0.7) 0%, transparent 60%);
+    }
+    .service-icon-badge {
+      position:absolute; bottom:14px; left:14px;
+      width:44px; height:44px; border-radius:12px;
+      background:linear-gradient(135deg,var(--gold-dark),var(--gold));
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.1rem; color:var(--black);
+      box-shadow: 0 4px 12px rgba(212,175,55,0.4);
+    }
+    html[dir="rtl"] .service-icon-badge { left:auto; right:14px; }
+    .service-body { padding:22px; }
+    .service-body h3 { font-size:1.1rem; margin-bottom:10px; color:var(--white); font-family:'Poppins',sans-serif; font-weight:600; }
+    html[dir="rtl"] .service-body h3 { font-family:'Cairo',sans-serif; }
+    .service-body p { font-size:.85rem; color:var(--gray-text); margin-bottom:18px; line-height:1.6; }
+    .service-link {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:.82rem; font-weight:600; color:var(--gold); transition:var(--transition);
+    }
+    .service-link:hover { gap:10px; }
+    .service-link i { font-size:.7rem; transition:var(--transition); }
+
+    /* ===================== BEFORE / AFTER ===================== */
+    .ba-section { background: var(--black-2); }
+    .ba-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:24px; }
+    .ba-card {
+      border-radius:var(--radius); overflow:hidden;
+      position:relative; cursor:pointer;
+      border:1px solid rgba(255,255,255,0.06);
+    }
+    .ba-slider-wrap { position:relative; height:260px; overflow:hidden; }
+    .ba-img-after, .ba-img-before {
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    }
+    .ba-img-before { clip-path: inset(0 50% 0 0); }
+    html[dir="rtl"] .ba-img-before { clip-path: inset(0 0 0 50%); }
+    .ba-range {
+      position:absolute; inset:0; width:100%; height:100%;
+      opacity:0; cursor:ew-resize; z-index:3;
+    }
+    .ba-divider {
+      position:absolute; top:0; bottom:0; left:50%; width:3px;
+      background:var(--gold); transform:translateX(-50%); z-index:2;
+      pointer-events:none; transition: left 0.05s;
+    }
+    html[dir="rtl"] .ba-divider { left:auto; right:50%; transform:translateX(50%); }
+    .ba-handle {
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:36px; height:36px; border-radius:50%;
+      background:var(--gold); display:flex; align-items:center; justify-content:center;
+      font-size:.75rem; color:var(--black); z-index:4; pointer-events:none;
+      box-shadow: 0 2px 10px rgba(212,175,55,0.5);
+      transition: left 0.05s;
+    }
+    html[dir="rtl"] .ba-handle { left:auto; right:50%; transform:translate(50%,-50%); }
+    .ba-label {
+      position:absolute; top:12px; padding:4px 12px;
+      border-radius:50px; font-size:.7rem; font-weight:700;
+      letter-spacing:1px; text-transform:uppercase; z-index:2;
+    }
+    .ba-label-before { left:12px; background:rgba(255,80,80,0.85); color:#fff; }
+    html[dir="rtl"] .ba-label-before { left:auto; right:12px; }
+    .ba-label-after { right:12px; background:rgba(37,211,102,0.85); color:#fff; }
+    html[dir="rtl"] .ba-label-after { right:auto; left:12px; }
+    .ba-info { padding:18px; background:var(--black-3); }
+    .ba-info h4 { font-size:.95rem; color:var(--white); font-family:'Poppins',sans-serif; font-weight:600; margin-bottom:4px; }
+    html[dir="rtl"] .ba-info h4 { font-family:'Cairo',sans-serif; }
+    .ba-info p { font-size:.8rem; color:var(--gray-mid); }
+
+    /* ===================== WHY CHOOSE US ===================== */
+    .why-section { background: var(--black); position:relative; overflow:hidden; }
+    .why-glow {
+      position:absolute; bottom:-150px; left:-150px;
+      width:500px; height:500px; border-radius:50%;
+      background:radial-gradient(circle,rgba(212,175,55,0.06) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .why-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:24px; position:relative; z-index:1; }
+    .why-card {
+      background:var(--black-2); border:1px solid rgba(255,255,255,0.06);
+      border-radius:var(--radius); padding:32px 24px; text-align:center;
+      transition:var(--transition);
+    }
+    .why-card:hover { border-color:rgba(212,175,55,0.3); transform:translateY(-6px); }
+    .why-icon {
+      width:64px; height:64px; border-radius:50%; margin:0 auto 20px;
+      background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.5rem; color:var(--gold);
+    }
+    .why-card h3 { font-size:1rem; color:var(--white); font-family:'Poppins',sans-serif; font-weight:600; margin-bottom:10px; }
+    html[dir="rtl"] .why-card h3 { font-family:'Cairo',sans-serif; }
+    .why-card p { font-size:.83rem; color:var(--gray-text); line-height:1.6; }
+
+    /* ===================== PROCESS ===================== */
+    .process-section { background:var(--black-2); }
+    .process-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0; position:relative; }
+    .process-step { text-align:center; padding:24px 20px; position:relative; }
+    .process-step:not(:last-child)::after {
+      content:'→'; position:absolute; right:-14px; top:50%; transform:translateY(-50%);
+      color:var(--gold); font-size:1.2rem; z-index:1;
+    }
+    html[dir="rtl"] .process-step:not(:last-child)::after { content:'←'; right:auto; left:-14px; }
+    .step-num {
+      width:48px; height:48px; border-radius:50%; margin:0 auto 16px;
+      background:linear-gradient(135deg,var(--gold-dark),var(--gold));
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.1rem; font-weight:700; color:var(--black);
+      box-shadow: 0 4px 16px rgba(212,175,55,0.35);
+    }
+    .process-step h4 { font-size:.9rem; color:var(--white); font-family:'Poppins',sans-serif; font-weight:600; margin-bottom:8px; }
+    html[dir="rtl"] .process-step h4 { font-family:'Cairo',sans-serif; }
+    .process-step p { font-size:.78rem; color:var(--gray-mid); }
+
+    /* ===================== CTA BANNER ===================== */
+    .cta-banner {
+      background: linear-gradient(135deg, #1a1200 0%, #2a1f00 50%, #1a1200 100%);
+      border-top:1px solid rgba(212,175,55,0.2);
+      border-bottom:1px solid rgba(212,175,55,0.2);
+      padding:60px 0; text-align:center; position:relative; overflow:hidden;
+    }
+    .cta-banner::before {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse at center, rgba(212,175,55,0.08) 0%, transparent 70%);
+    }
+    .cta-banner h2 { font-size:clamp(1.6rem,3.5vw,2.4rem); margin-bottom:14px; position:relative; }
+    .cta-banner p { color:var(--gray-text); margin-bottom:28px; font-size:.95rem; position:relative; }
+    .cta-banner .btn { position:relative; }
+
+    /* ===================== CONTACT / QUOTE FORM ===================== */
+    .contact-section { background:var(--black); }
+    .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
+    .contact-info h3 { font-size:1.6rem; margin-bottom:16px; }
+    .contact-info > p { color:var(--gray-text); font-size:.9rem; margin-bottom:32px; }
+    .contact-detail { display:flex; align-items:flex-start; gap:14px; margin-bottom:24px; }
+    .contact-detail-icon {
+      width:44px; height:44px; border-radius:12px; flex-shrink:0;
+      background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--gold); font-size:1rem;
+    }
+    .contact-detail-text strong { display:block; font-size:.85rem; color:var(--white); margin-bottom:2px; }
+    .contact-detail-text span { font-size:.82rem; color:var(--gray-mid); }
+    .social-row { display:flex; gap:12px; margin-top:32px; }
+    .social-btn {
+      width:44px; height:44px; border-radius:12px;
+      background:var(--black-2); border:1px solid rgba(255,255,255,0.08);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--gray-text); font-size:1.1rem; transition:var(--transition);
+    }
+    .social-btn:hover { background:var(--gold); color:var(--black); border-color:var(--gold); transform:translateY(-3px); }
+
+    /* Form */
+    .quote-form {
+      background:var(--black-2); border:1px solid rgba(212,175,55,0.2);
+      border-radius:var(--radius); padding:36px;
+    }
+    .quote-form h3 { font-size:1.3rem; margin-bottom:6px; }
+    .quote-form > p { font-size:.82rem; color:var(--gray-mid); margin-bottom:28px; }
+    .form-group { margin-bottom:18px; }
+    .form-group label { display:block; font-size:.8rem; font-weight:600; color:var(--gold); margin-bottom:7px; letter-spacing:.5px; }
+    .form-control {
+      width:100%; padding:13px 16px;
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+      border-radius:var(--radius-sm); color:var(--white);
+      font-family:inherit; font-size:.9rem; transition:var(--transition);
+    }
+    .form-control:focus { outline:none; border-color:var(--gold); background:rgba(212,175,55,0.05); }
+    .form-control::placeholder { color:rgba(255,255,255,0.25); }
+    select.form-control { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23D4AF37' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; }
+    html[dir="rtl"] select.form-control { background-position:left 14px center; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .form-submit { width:100%; margin-top:8px; justify-content:center; font-size:1rem; padding:16px; }
+
+    /* ===================== FOOTER ===================== */
+    footer {
+      background:var(--black-3); border-top:1px solid rgba(212,175,55,0.15);
+      padding:60px 0 24px;
+    }
+    .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+    .footer-brand p { font-size:.83rem; color:var(--gray-mid); margin-top:14px; line-height:1.7; }
+    .footer-col h4 { font-size:.85rem; color:var(--gold); font-family:'Poppins',sans-serif; font-weight:600; margin-bottom:18px; letter-spacing:1px; text-transform:uppercase; }
+    html[dir="rtl"] .footer-col h4 { font-family:'Cairo',sans-serif; }
+    .footer-col ul li { margin-bottom:10px; }
+    .footer-col ul li a { font-size:.83rem; color:var(--gray-mid); transition:var(--transition); }
+    .footer-col ul li a:hover { color:var(--gold); }
+    .footer-bottom {
+      border-top:1px solid rgba(255,255,255,0.06); padding-top:24px;
+      display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+    }
+    .footer-bottom p { font-size:.78rem; color:var(--gray-mid); }
+
+    /* ===================== FLOATING WHATSAPP ===================== */
+    .float-wa {
+      position:fixed; bottom:28px; right:28px; z-index:997;
+      width:60px; height:60px; border-radius:50%;
+      background:var(--whatsapp); color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.7rem; box-shadow:0 4px 20px rgba(37,211,102,0.5);
+      transition:var(--transition); animation: pulse-wa 2s infinite;
+    }
+    html[dir="rtl"] .float-wa { right:auto; left:28px; }
+    .float-wa:hover { transform:scale(1.12); box-shadow:0 8px 30px rgba(37,211,102,0.6); }
+    .float-wa-tooltip {
+      position:absolute; right:72px; top:50%; transform:translateY(-50%);
+      background:var(--white); color:var(--black); padding:8px 14px;
+      border-radius:8px; font-size:.78rem; font-weight:600; white-space:nowrap;
+      box-shadow:0 4px 16px rgba(0,0,0,0.2); opacity:0; pointer-events:none;
+      transition:var(--transition);
+    }
+    html[dir="rtl"] .float-wa-tooltip { right:auto; left:72px; }
+    .float-wa:hover .float-wa-tooltip { opacity:1; }
+    @keyframes pulse-wa {
+      0%,100% { box-shadow:0 4px 20px rgba(37,211,102,0.5); }
+      50%      { box-shadow:0 4px 30px rgba(37,211,102,0.8), 0 0 0 8px rgba(37,211,102,0.15); }
+    }
+
+    /* ===================== SCROLL TO TOP ===================== */
+    .scroll-top {
+      position:fixed; bottom:28px; left:28px; z-index:997;
+      width:44px; height:44px; border-radius:50%;
+      background:var(--black-2); border:1px solid rgba(212,175,55,0.3);
+      color:var(--gold); display:flex; align-items:center; justify-content:center;
+      font-size:.9rem; opacity:0; pointer-events:none; transition:var(--transition);
+    }
+    html[dir="rtl"] .scroll-top { left:auto; right:28px; }
+    .scroll-top.visible { opacity:1; pointer-events:auto; }
+    .scroll-top:hover { background:var(--gold); color:var(--black); }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media(max-width:1024px) {
+      .footer-grid { grid-template-columns:1fr 1fr; }
+      .contact-grid { grid-template-columns:1fr; }
+    }
+    @media(max-width:768px) {
+      .nav-links, .header-cta { display:none; }
+      .hamburger { display:flex; }
+      .hero { min-height:auto; padding:120px 0 80px; }
+      .hero h1 { font-size:2rem; }
+      .hero-trust { flex-direction:column; align-items:flex-start; gap:10px; }
+      .trust-divider { display:none; }
+      .section-pad { padding:60px 0; }
+      .form-row { grid-template-columns:1fr; }
+      .footer-grid { grid-template-columns:1fr; gap:28px; }
+      .process-step:not(:last-child)::after { display:none; }
+      .trust-strip-inner { gap:16px; }
+      .trust-stat .num { font-size:1.4rem; }
+      .float-wa { width:52px; height:52px; font-size:1.4rem; bottom:20px; right:20px; }
+      html[dir="rtl"] .float-wa { right:auto; left:20px; }
+      .scroll-top { bottom:20px; left:20px; width:38px; height:38px; }
+      html[dir="rtl"] .scroll-top { left:auto; right:20px; }
+    }
+    @media(max-width:480px) {
+      .hero-btns { flex-direction:column; }
+      .hero-btns .btn { width:100%; justify-content:center; }
+      .ba-grid { grid-template-columns:1fr; }
+      .services-grid { grid-template-columns:1fr; }
+    }
+
+    /* ===================== ANIMATIONS ON SCROLL ===================== */
+    .reveal {
+      opacity:0; transform:translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-delay-1 { transition-delay:0.1s; }
+    .reveal-delay-2 { transition-delay:0.2s; }
+    .reveal-delay-3 { transition-delay:0.3s; }
+    .reveal-delay-4 { transition-delay:0.4s; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== ANNOUNCEMENT BAR ===== -->
+  <div class="announce-bar">
+    <i class="fas fa-bolt"></i>
+    <span data-en="Now serving all areas of Khartoum — Book your free inspection today!"
+          data-ar="نخدم جميع مناطق الخرطوم — احجز معاينتك المجانية اليوم!">
+      Now serving all areas of Khartoum — Book your free inspection today!
+    </span>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <header id="mainHeader">
+    <div class="header-inner">
+      <a href="#home" class="logo">
+        <div class="logo-icon"><i class="fas fa-star"></i></div>
+        <div class="logo-text-wrap">
+          <span class="logo-name" data-en="Specialist" data-ar="الأخصائي">Specialist</span>
+          <span class="logo-sub" data-en="Cleaning & Finishing" data-ar="للنظافة والتشطيب">Cleaning &amp; Finishing</span>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#home"    data-en="Home"     data-ar="الرئيسية">Home</a></li>
+          <li><a href="#services" data-en="Services" data-ar="خدماتنا">Services</a></li>
+          <li><a href="#portfolio" data-en="Our Work" data-ar="أعمالنا">Our Work</a></li>
+          <li><a href="#why"     data-en="Why Us"   data-ar="لماذا نحن">Why Us</a></li>
+          <li><a href="#contact" data-en="Contact"  data-ar="اتصل بنا">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="lang-btn" onclick="toggleLang()" id="langBtn">عربي</button>
+        <a href="https://wa.me/249127371927?text=Hello%20Specialist%2C%20I%20would%20like%20to%20book%20a%20service."
+           class="btn btn-gold header-cta" style="padding:10px 22px;font-size:.85rem;"
+           data-en="Book Now" data-ar="احجز الآن">
+          <i class="fab fa-whatsapp"></i> <span data-en="Book Now" data-ar="احجز الآن">Book Now</span>
+        </a>
+        <div class="hamburger" id="hamburger" onclick="toggleMobileNav()">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MOBILE NAV ===== -->
+  <div class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-close" onclick="toggleMobileNav()"><i class="fas fa-times"></i></div>
+    <a href="#home"     onclick="toggleMobileNav()" data-en="Home"     data-ar="الرئيسية">Home</a>
+    <a href="#services" onclick="toggleMobileNav()" data-en="Services" data-ar="خدماتنا">Services</a>
+    <a href="#portfolio" onclick="toggleMobileNav()" data-en="Our Work" data-ar="أعمالنا">Our Work</a>
+    <a href="#why"      onclick="toggleMobileNav()" data-en="Why Us"   data-ar="لماذا نحن">Why Us</a>
+    <a href="#contact"  onclick="toggleMobileNav()" data-en="Contact"  data-ar="اتصل بنا">Contact</a>
+    <a href="https://wa.me/249127371927" class="btn btn-wa" style="margin-top:12px;">
+      <i class="fab fa-whatsapp"></i> <span data-en="WhatsApp Us" data-ar="راسلنا واتساب">WhatsApp Us</span>
+    </a>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-glow"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="fas fa-map-marker-alt"></i>
+          <span data-en="Trusted Across Khartoum" data-ar="موثوقون في جميع أنحاء الخرطوم">Trusted Across Khartoum</span>
+        </div>
+        <h1 data-en="Your Home Deserves to <em>Shine</em> Again"
+            data-ar="منزلك يستحق أن <em>يلمع</em> من جديد">
+          Your Home Deserves to <em>Shine</em> Again
+        </h1>
+        <p class="hero-desc"
+           data-en="Deep cleaning, furniture restoration, floor polishing & finishing — done right, by specialists who treat your home like their own."
+           data-ar="تنظيف عميق، ترميم أثاث، تلميع أرضيات وتشطيب — نُنفذ العمل بإتقان، على يد أخصائيين يعاملون منزلك كأنه منزلهم.">
+          Deep cleaning, furniture restoration, floor polishing &amp; finishing — done right, by specialists who treat your home like their own.
+        </p>
+        <div class="hero-btns">
+          <a href="https://wa.me/249127371927?text=Hi%20Specialist%2C%20I%20want%20a%20free%20quote%20please."
+             class="btn btn-wa">
+            <i class="fab fa-whatsapp"></i>
+            <span data-en="Get a Free Quote" data-ar="احصل على عرض سعر مجاني">Get a Free Quote</span>
+          </a>
+          <a href="#services" class="btn btn-outline">
+            <span data-en="See Our Services" data-ar="تصفح خدماتنا">See Our Services</span>
+            <i class="fas fa-arrow-down"></i>
+          </a>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-item"><i class="fas fa-check-circle"></i> <span data-en="Free Inspection" data-ar="معاينة مجانية">Free Inspection</span></div>
+          <div class="trust-divider"></div>
+          <div class="trust-item"><i class="fas fa-check-circle"></i> <span data-en="All Khartoum Areas" data-ar="جميع مناطق الخرطوم">All Khartoum Areas</span></div>
+          <div class="trust-divider"></div>
+          <div class="trust-item"><i class="fas fa-check-circle"></i> <span data-en="Industrial Equipment" data-ar="معدات صناعية">Industrial Equipment</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRUST STRIP ===== -->
+  <div class="trust-strip">
+    <div class="container">
+      <div class="trust-strip-inner">
+        <div class="trust-stat">
+          <div class="num">5+</div>
+          <div class="lbl" data-en="Core Services" data-ar="خدمات أساسية">Core Services</div>
+        </div>
+        <div class="trust-stat">
+          <div class="num">24h</div>
+          <div class="lbl" data-en="Fast Response" data-ar="استجابة سريعة">Fast Response</div>
+        </div>
+        <div class="trust-stat">
+          <div class="num">100%</div>
+          <div class="lbl" data-en="Khartoum Coverage" data-ar="تغطية الخرطوم">Khartoum Coverage</div>
+        </div>
+        <div class="trust-stat">
+          <div class="num">★</div>
+          <div class="lbl" data-en="Specialist Team" data-ar="فريق متخصص">Specialist Team</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SERVICES ===== -->
+  <section class="services-section section-pad" id="services">
+    <div class="container">
+      <div class="sec-header reveal">
+        <div class="eyebrow" data-en="What We Do" data-ar="ماذا نقدم">What We Do</div>
+        <h2 data-en="Services Built Around Your Needs" data-ar="خدمات مصممة حول احتياجاتك">Services Built Around Your Needs</h2>
+        <p data-en="From post-construction mess to a spotless, polished home — we handle it all so you don't have to."
+           data-ar="من فوضى ما بعد البناء إلى منزل نظيف ولامع — نتولى كل شيء حتى لا تضطر أنت.">
+          From post-construction mess to a spotless, polished home — we handle it all so you don't have to.
+        </p>
+        <div class="gold-line"></div>
+      </div>
+
+      <div class="services-grid">
+
+        <!-- Service 1 -->
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-img-wrap">
+            <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80" alt="Post Construction Cleaning" loading="lazy" />
+            <div class="service-img-overlay"></div>
+            <div class="service-icon-badge"><i class="fas fa-hard-hat"></i></div>
+          </div>
+          <div class="service-body">
+            <h3 data-en="Post-Construction & Deep Cleaning" data-ar="تنظيف ما بعد البناء والتنظيف العميق">Post-Construction &amp; Deep Cleaning</h3>
+            <p data-en="We remove every trace of construction — dust, paint splatters, debris, and grime — leaving your new space truly move-in ready."
+               data-ar="نزيل كل أثر للبناء — الغبار، بقع الطلاء، المخلفات والأوساخ — لنترك مساحتك الجديدة جاهزة للسكن حقاً.">
+              We remove every trace of construction — dust, paint splatters, debris, and grime — leaving your new space truly move-in ready.
+            </p>
+            <a href="https://wa.me/249127371927?text=Hi%2C%20I%20need%20post-construction%20cleaning."
+               class="service-link">
+              <span data-en="Book This Service" data-ar="احجز هذه الخدمة">Book This Service</span>
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-img-wrap">
+            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80" alt="Sofa Restoration" loading="lazy" />
+            <div class="service-img-overlay"></div>
+            <div class="service-icon-badge"><i class="fas fa-couch"></i></div>
+          </div>
+          <div class="service-body">
+            <h3 data-en="Sofa & Furniture Restoration" data-ar="ترميم الكنب والأثاث">Sofa &amp; Furniture Restoration</h3>
+            <p data-en="Deep steam extraction, stain removal, and professional upholstery repair. Your furniture will look and smell brand new — guaranteed."
+               data-ar="استخلاص عميق بالبخار، إزالة البقع، وإصلاح تنجيد احترافي. أثاثك سيبدو وبرائحته كالجديد — مضمون.">
+              Deep steam extraction, stain removal, and professional upholstery repair. Your furniture will look and smell brand new — guaranteed.
+            </p>
+            <a href="https://wa.me/249127371927?text=Hi%2C%20I%20need%20sofa%20cleaning%20service."
+               class="service-link">
+              <span data-en="Book This Service" data-ar="احجز هذه الخدمة">Book This Service</span>
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="service-card reveal reveal-delay-3">
+          <div class="service-img-wrap">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80" alt="Floor Polishing" loading="lazy" />
+            <div class="service-img-overlay"></div>
+            <div class="service-icon-badge"><i class="fas fa-gem"></i></div>
+          </div>
+          <div class="service-body">
+            <h3 data-en="Floor Polishing & Treatment" data-ar="تلميع ومعالجة الأرضيات">Floor Polishing &amp; Treatment</h3>
+            <p data-en="Marble, granite, tile, and ceramic — we restore the mirror-like shine your floors had on day one using industrial-grade machines."
+               data-ar="رخام، جرانيت، بلاط وسيراميك — نعيد اللمعان المرآتي الذي كانت عليه أرضياتك في اليوم الأول باستخدام آلات صناعية.">
+              Marble, granite, tile, and ceramic — we restore the mirror-like shine your floors had on day one using industrial-grade machines.
+            </p>
+            <a href="https://wa.me/249127371927?text=Hi%2C%20I%20need%20floor%20polishing%20service."
+               class="service-link">
+              <span data-en="Book This Service" data-ar="احجز هذه الخدمة">Book This Service</span>
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Service 4 -->
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-img-wrap">
+            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Door Maintenance" loading="lazy" />
+            <div class="service-img-overlay"></div>
+            <div class="service-icon-badge"><i class="fas fa-door-closed"></i></div>
+          </div>
+          <div class="service-body">
+            <h3 data-en="Door & Lock Maintenance" data-ar="صيانة الأبواب والأقفال">Door &amp; Lock Maintenance</h3>
+            <p data-en="Lock replacement, peephole installation, handle fitting, and full door hardware maintenance — secure and smooth, every time."
+               data-ar="استبدال الأقفال، تركيب العيون السحرية، تركيب المقابض، وصيانة كاملة لإكسسوارات الأبواب — أمان وسلاسة في كل مرة.">
+              Lock replacement, peephole installation, handle fitting, and full door hardware maintenance — secure and smooth, every time.
+            </p>
+            <a href="https://wa.me/249127371927?text=Hi%2C%20I%20need%20door%20maintenance%20service."
+               class="service-link">
+              <span data-en="Book This Service" data-ar="احجز هذه الخدمة">Book This Service</span>
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Service 5 -->
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-img-wrap">
+            <img src="https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=600&q=80" alt="Car Detailing" loading="lazy" />
+            <div class="service-img-overlay"></div>
+            <div class="service-icon-badge"><i class="fas fa-car-side"></i></div>
+          </div>
+          <div class="service-body">
+            <h3 data-en="Car Detailing & Washing" data-ar="تلميع وغسيل السيارات">Car Detailing &amp; Washing</h3>
+            <p data-en="Full interior and exterior detailing at your location. We bring the equipment — you get a car that feels showroom-fresh again."
+               data-ar="تلميع داخلي وخارجي كامل في موقعك. نحن نحضر المعدات — وأنت تحصل على سيارة تشعر أنها جديدة من المعرض.">
+              Full interior and exterior detailing at your location. We bring the equipment — you get a car that feels showroom-fresh again.
+            </p>
+            <a href="https://wa.me/249127371927?text=Hi%2C%20I%20need%20car%20detailing%20service."
+               class="service-link">
+              <span data-en="Book This Service" data-ar="احجز هذه الخدمة">Book This Service</span>
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+      </div><!-- /services-grid -->
+    </div>
+  </section>
+
+  <!-- ===== BEFORE / AFTER ===== -->
+  <section class="ba-section section-pad" id="portfolio">
+    <div class="container">
+      <div class="sec-header reveal">
+        <div class="eyebrow" data-en="Real Results" data-ar="نتائج حقيقية">Real Results</div>
+        <h2 data-en="See the Specialist Difference" data-ar="شاهد فرق الأخصائي">See the Specialist Difference</h2>
+        <p data-en="Drag the slider to reveal the transformation. Real work, real homes in Khartoum."
+           data-ar="اسحب المؤشر لكشف التحول. عمل حقيقي، منازل حقيقية في الخرطوم.">
+          Drag the slider to reveal the transformation. Real work, real homes in Khartoum.
+        </p>
+        <div class="gold-line"></div>
+      </div>
+
+      <div class="ba-grid">
+
+        <!-- BA Card 1 -->
+        <div class="ba-card reveal reveal-delay-1">
+          <div class="ba-slider-wrap" id="ba1">
+            <img class="ba-img-after"  src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80" alt="After marble polishing" loading="lazy" />
+            <img class="ba-img-before" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Before marble polishing" loading="lazy" />
+            <div class="ba-label ba-label-before" data-en="Before" data-ar="قبل">Before</div>
+            <div class="ba-label ba-label-after"  data-en="After"  data-ar="بعد">After</div>
+            <div class="ba-divider" id="ba1-divider"></div>
+            <div class="ba-handle" id="ba1-handle"><i class="fas fa-arrows-left-right"></i></div>
+            <input type="range" min="0" max="100" value="50" class="ba-range" id="ba1-range"
+                   oninput="updateBA('ba1', this.value)" />
+          </div>
+          <div class="ba-info">
+            <h4 data-en="Marble Floor Restoration" data-ar="ترميم أرضية رخامية">Marble Floor Restoration</h4>
+            <p data-en="From dull and scratched to mirror-polished — Khartoum villa" data-ar="من باهت ومخدوش إلى ملمع كالمرآة — فيلا بالخرطوم">From dull and scratched to mirror-polished — Khartoum villa</p>
+          </div>
+        </div>
+
+        <!-- BA Card 2 -->
+        <div class="ba-card reveal reveal-delay-2">
+          <div class="ba-slider-wrap" id="ba2">
+            <img class="ba-img-after"  src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80" alt="After sofa cleaning" loading="lazy" />
+            <img class="ba-img-before" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80" alt="Before sofa cleaning" loading="lazy" />
+            <div class="ba-label ba-label-before" data-en="Before" data-ar="قبل">Before</div>
+            <div class="ba-label ba-label-after"  data-en="After"  data-ar="بعد">After</div>
+            <div class="ba-divider" id="ba2-divider"></div>
+            <div class="ba-handle" id="ba2-handle"><i class="fas fa-arrows-left-right"></i></div>
+            <input type="range" min="0" max="100" value="50" class="ba-range" id="ba2-range"
+                   oninput="updateBA('ba2', this.value)" />
+          </div>
+          <div class="ba-info">
+            <h4 data-en="Sofa Deep Steam Clean" data-ar="غسيل كنب بالبخار العميق">Sofa Deep Steam Clean</h4>
+            <p data-en="Years of stains removed — fabric restored to original colour" data-ar="أزيلت بقع سنوات — أُعيد القماش إلى لونه الأصلي">Years of stains removed — fabric restored to original colour</p>
+          </div>
+        </div>
+
+        <!-- BA Card 3 -->
+        <div class="ba-card reveal reveal-delay-3">
+          <div class="ba-slider-wrap" id="ba3">
+            <img class="ba-img-after"  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80" alt="After deep cleaning" loading="lazy" />
+            <img class="ba-img-before" src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=80" alt="Before deep cleaning" loading="lazy" />
+            <div class="ba-label ba-label-before" data-en="Before" data-ar="قبل">Before</div>
+            <div class="ba-label ba-label-after"  data-en="After"  data-ar="بعد">After</div>
+            <div class="ba-divider" id="ba3-divider"></div>
+            <div class="ba-handle" id="ba3-handle"><i class="fas fa-arrows-left-right"></i></div>
+            <input type="range" min="0" max="100" value="50" class="ba-range" id="ba3-range"
+                   oninput="updateBA('ba3', this.value)" />
+          </div>
+          <div class="ba-info">
+            <h4 data-en="Post-Construction Full Clean" data-ar="تنظيف شامل ما بعد البناء">Post-Construction Full Clean</h4>
+            <p data-en="Complete debris removal and deep clean — ready for furnishing" data-ar="إزالة مخلفات كاملة وتنظيف عميق — جاهز للتأثيث">Complete debris removal and deep clean — ready for furnishing</p>
+          </div>
+        </div>
+
+      </div><!-- /ba-grid -->
+
+      <div class="text-center" style="margin-top:36px;">
+        <a href="https://wa.me/249127371927?text=Hi%2C%20I%20saw%20your%20work%20and%20want%20the%20same%20results!"
+           class="btn btn-gold">
+          <i class="fab fa-whatsapp"></i>
+          <span data-en="I Want These Results — Let's Talk" data-ar="أريد هذه النتائج — لنتحدث">I Want These Results — Let's Talk</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WHY CHOOSE US ===== -->
+  <section class="why-section section-pad" id="why">
+    <div class="why-glow"></div>
+    <div class="container">
+      <div class="sec-header reveal">
+        <div class="eyebrow" data-en="Why Specialist?" data-ar="لماذا الأخصائي؟">Why Specialist?</div>
+        <h2 data-en="We're Not Just Cleaners — We're Restorers" data-ar="لسنا مجرد منظفين — نحن مُرممون">We're Not Just Cleaners — We're Restorers</h2>
+        <p data-en="Anyone can wipe a surface. We bring back what your space used to feel like."
+           data-ar="أي شخص يستطيع مسح سطح. نحن نُعيد لما كانت مساحتك تشعر به.">
+          Anyone can wipe a surface. We bring back what your space used to feel like.
+        </p>
+        <div class="gold-line"></div>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-card reveal reveal-delay-1">
+          <div class="why-icon"><i class="fas fa-industry"></i></div>
+          <h3 data-en="Industrial-Grade Equipment" data-ar="معدات بدرجة صناعية">Industrial-Grade Equipment</h3>
+          <p data-en="Professional steam extractors, floor scrubbers, and high-suction vacuums — not household tools. The difference is visible."
+             data-ar="مستخلصات بخار احترافية، جلايات أرضيات، ومكانس عالية الشفط — ليست أدوات منزلية. الفرق واضح للعين.">
+            Professional steam extractors, floor scrubbers, and high-suction vacuums — not household tools. The difference is visible.
+          </p>
+        </div>
+        <div class="why-card reveal reveal-delay-2">
+          <div class="why-icon"><i class="fas fa-puzzle-piece"></i></div>
+          <h3 data-en="One Call, Everything Done" data-ar="اتصال واحد، كل شيء يُنجز">One Call, Everything Done</h3>
+          <p data-en="Cleaning, polishing, furniture, doors — stop juggling multiple contractors. We are your single point of contact for a finished home."
+             data-ar="تنظيف، تلميع، أثاث، أبواب — توقف عن التعامل مع مقاولين متعددين. نحن نقطتك الوحيدة لمنزل مكتمل.">
+            Cleaning, polishing, furniture, doors — stop juggling multiple contractors. We are your single point of contact for a finished home.
+          </p>
+        </div>
+        <div class="why-card reveal reveal-delay-3">
+          <div class="why-icon"><i class="fas fa-bolt"></i></div>
+          <h3 data-en="Fast Scheduling, All Khartoum" data-ar="جدولة سريعة، كل الخرطوم">Fast Scheduling, All Khartoum</h3>
+          <p data-en="We cover every neighbourhood in Khartoum and respond fast. Your time matters — we respect it with punctual, efficient service."
+             data-ar="نغطي كل أحياء الخرطوم ونستجيب بسرعة. وقتك مهم — نحترمه بخدمة دقيقة وفعالة.">
+            We cover every neighbourhood in Khartoum and respond fast. Your time matters — we respect it with punctual, efficient service.
+          </p>
+        </div>
+        <div class="why-card reveal reveal-delay-4">
+          <div class="why-icon"><i class="fas fa-hand-holding-heart"></i></div>
+          <h3 data-en="We Treat Your Home Like Ours" data-ar="نعامل منزلك كمنزلنا">We Treat Your Home Like Ours</h3>
+          <p data-en="Careful, respectful, and thorough. We protect your belongings, communicate clearly, and don't leave until you're genuinely satisfied."
+             data-ar="بعناية واحترام وإتقان. نحمي ممتلكاتك، نتواصل بوضوح، ولا نغادر حتى تكون راضياً حقاً.">
+            Careful, respectful, and thorough. We protect your belongings, communicate clearly, and don't leave until you're genuinely satisfied.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="process-section section-pad">
+    <div class="container">
+      <div class="sec-header reveal">
+        <div class="eyebrow" data-en="Simple Process" data-ar="خطوات بسيطة">Simple Process</div>
+        <h2 data-en="From Mess to Masterpiece in 4 Steps" data-ar="من الفوضى إلى التحفة في ٤ خطوات">From Mess to Masterpiece in 4 Steps</h2>
+        <div class="gold-line"></div>
+      </div>
+      <div class="process-steps reveal">
+        <div class="process-step">
+          <div class="step-num">1</div>
+          <h4 data-en="Send a Message" data-ar="أرسل رسالة">Send a Message</h4>
+          <p data-en="WhatsApp us with your needs — takes 30 seconds" data-ar="راسلنا واتساب باحتياجاتك — تستغرق ٣٠ ثانية">WhatsApp us with your needs — takes 30 seconds</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">2</div>
+          <h4 data-en="Free Inspection" data-ar="معاينة مجانية">Free Inspection</h4>
+          <p data-en="We assess the space and give you an honest quote" data-ar="نقيّم المساحة ونعطيك عرض سعر صادق">We assess the space and give you an honest quote</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">3</div>
+          <h4 data-en="We Get to Work" data-ar="نبدأ العمل">We Get to Work</h4>
+          <p data-en="Our specialist team arrives fully equipped" data-ar="فريقنا المتخصص يصل مجهزاً بالكامل">Our specialist team arrives fully equipped</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">4</div>
+          <h4 data-en="You Enjoy the Result" data-ar="استمتع بالنتيجة">You Enjoy the Result</h4>
+          <p data-en="Walk into a space that feels brand new" data-ar="ادخل مساحة تشعر أنها جديدة تماماً">Walk into a space that feels brand new</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <div class="cta-banner">
+    <div class="container">
+      <h2 data-en="Ready to Fall in Love With Your Space Again?"
+          data-ar="مستعد أن تقع في حب مساحتك من جديد؟">
+        Ready to Fall in Love With Your Space Again?
+      </h2>
+      <p data-en="One WhatsApp message is all it takes. No obligation, no pressure — just a clean, honest conversation about your home."
+         data-ar="رسالة واتساب واحدة هي كل ما تحتاجه. بدون التزام، بدون ضغط — فقط محادثة نظيفة وصادقة حول منزلك.">
+        One WhatsApp message is all it takes. No obligation, no pressure — just a clean, honest conversation about your home.
+      </p>
+      <a href="https://wa.me/249127371927?text=Hello%20Specialist%2C%20I%20would%20like%20to%20discuss%20a%20service%20for%20my%20home."
+         class="btn btn-wa" style="font-size:1rem;padding:16px 36px;">
+        <i class="fab fa-whatsapp"></i>
+        <span data-en="Start the Conversation Now" data-ar="ابدأ المحادثة الآن">Start the Conversation Now</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ===== CONTACT / QUOTE FORM ===== -->
+  <section class="contact-section section-pad" id="contact">
+    <div class="container">
+      <div class="sec-header reveal">
+        <div class="eyebrow" data-en="Get In Touch" data-ar="تواصل معنا">Get In Touch</div>
+        <h2 data-en="Let's Talk About Your Space" data-ar="لنتحدث عن مساحتك">Let's Talk About Your Space</h2>
+        <div class="gold-line"></div>
+      </div>
+
+      <div class="contact-grid">
+
+        <!-- Left: Info -->
+        <div class="contact-info reveal">
+          <h3 data-en="We're Here When You Need Us" data-ar="نحن هنا عندما تحتاجنا">We're Here When You Need Us</h3>
+          <p data-en="Whether it's an urgent post-construction clean or a scheduled sofa refresh — reach out anytime. We respond fast, every time."
+             data-ar="سواء كان تنظيفاً عاجلاً ما بعد البناء أو تجديد كنب مجدول — تواصل في أي وقت. نستجيب بسرعة، في كل مرة.">
+            Whether it's an urgent post-construction clean or a scheduled sofa refresh — reach out anytime. We respond fast, every time.
+          </p>
+
+          <div class="contact-detail">
+            <div class="contact-detail-icon"><i class="fas fa-phone-alt"></i></div>
+            <div class="contact-detail-text">
+              <strong data-en="Call or WhatsApp" data-ar="اتصل أو واتساب">Call or WhatsApp</strong>
+              <span>+249 12 737 1927</span><br/>
+              <span>+249 99 898 1452</span>
+            </div>
+          </div>
+
+          <div class="contact-detail">
+            <div class="contact-detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div class="contact-detail-text">
+              <strong data-en="Service Area" data-ar="منطقة الخدمة">Service Area</strong>
+              <span data-en="All neighbourhoods across Khartoum, Sudan" data-ar="جميع أحياء الخرطوم، السودان">All neighbourhoods across Khartoum, Sudan</span>
+            </div>
+          </div>
+
+          <div class="contact-detail">
+            <div class="contact-detail-icon"><i class="fas fa-clock"></i></div>
+            <div class="contact-detail-text">
+              <strong data-en="Working Hours" data-ar="ساعات العمل">Working Hours</strong>
+              <span data-en="Saturday – Thursday | 8:00 AM – 8:00 PM" data-ar="السبت – الخميس | ٨:٠٠ صباحاً – ٨:٠٠ مساءً">Saturday – Thursday | 8:00 AM – 8:00 PM</span>
+            </div>
+          </div>
+
+          <div class="social-row">
+            <a href="#" class="social-btn" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="#" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://wa.me/249127371927" class="social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+
+        <!-- Right: Form -->
+        <div class="quote-form reveal reveal-delay-2">
+          <h3 data-en="Request a Free Quote" data-ar="اطلب عرض سعر مجاني">Request a Free Quote</h3>
+          <p data-en="Fill in the details below — we'll redirect you to WhatsApp with your enquiry pre-filled."
+             data-ar="املأ التفاصيل أدناه — سنوجهك إلى واتساب مع استفسارك معبأ مسبقاً.">
+            Fill in the details below — we'll redirect you to WhatsApp with your enquiry pre-filled.
+          </p>
+
+          <div class="form-group">
+            <label data-en="Your Name" data-ar="اسمك">Your Name</label>
+            <input type="text" class="form-control" id="qName"
+                   data-placeholder-en="e.g. Ahmed Mohamed" data-placeholder-ar="مثال: أحمد محمد"
+                   placeholder="e.g. Ahmed Mohamed" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label data-en="Phone Number" data-ar="رقم الهاتف">Phone Number</label>
+              <input type="tel" class="form-control" id="qPhone"
+                     data-placeholder-en="+249 ..." data-placeholder-ar="+249 ..."
+                     placeholder="+249 ..." />
+            </div>
+            <div class="form-group">
+              <label data-en="Location" data-ar="الموقع">Location</label>
+              <input type="text" class="form-control" id="qLocation"
+                     data-placeholder-en="e.g. Riyad, Khartoum" data-placeholder-ar="مثال: الرياض، الخرطوم"
+                     placeholder="e.g. Riyad, Khartoum" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label data-en="Service Required" data-ar="الخدمة المطلوبة">Service Required</label>
+            <select class="form-control" id="qService">
+              <option value="" data-en="Select a service..." data-ar="اختر خدمة...">Select a service...</option>
+              <option value="Post-Construction Cleaning" data-en="Post-Construction & Deep Cleaning" data-ar="تنظيف ما بعد البناء والتنظيف العميق">Post-Construction &amp; Deep Cleaning</option>
+              <option value="Sofa & Furniture Restoration" data-en="Sofa & Furniture Restoration" data-ar="ترميم الكنب والأثاث">Sofa &amp; Furniture Restoration</option>
+              <option value="Floor Polishing" data-en="Floor Polishing & Treatment" data-ar="تلميع ومعالجة الأرضيات">Floor Polishing &amp; Treatment</option>
+              <option value="Door & Lock Maintenance" data-en="Door & Lock Maintenance" data-ar="صيانة الأبواب والأقفال">Door &amp; Lock Maintenance</option>
+              <option value="Car Detailing" data-en="Car Detailing & Washing" data-ar="تلميع وغسيل السيارات">Car Detailing &amp; Washing</option>
+              <option value="Multiple Services" data-en="Multiple Services" data-ar="خدمات متعددة">Multiple Services</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label data-en="Anything else? (Optional)" data-ar="أي شيء آخر؟ (اختياري)">Anything else? (Optional)</label>
+            <textarea class="form-control" id="qNotes" rows="3"
+                      data-placeholder-en="Tell us more about your space..." data-placeholder-ar="أخبرنا المزيد عن مساحتك..."
+                      placeholder="Tell us more about your space..."></textarea>
+          </div>
+
+          <button class="btn btn-wa form-submit" onclick="submitQuote()">
+            <i class="fab fa-whatsapp"></i>
+            <span data-en="Send via WhatsApp" data-ar="أرسل عبر واتساب">Send via WhatsApp</span>
+          </button>
+        </div>
+
+      </div><!-- /contact-grid -->
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+
+        <div class="footer-brand">
+          <a href="#home" class="logo" style="margin-bottom:8px;display:inline-flex;">
+            <div class="logo-icon"><i class="fas fa-star"></i></div>
+            <div class="logo-text-wrap">
+              <span class="logo-name" data-en="Specialist" data-ar="الأخصائي">Specialist</span>
+              <span class="logo-sub" data-en="Cleaning & Finishing" data-ar="للنظافة والتشطيب">Cleaning &amp; Finishing</span>
+            </div>
+          </a>
+          <p data-en="Specialist Company for Finishing & Cleaning Services. Restoring life, polish, and comfort to homes and spaces across Khartoum since day one."
+             data-ar="شركة الأخصائي لخدمات النظافة والتشطيب. نعيد الحياة واللمعان والراحة للمنازل والمساحات في جميع أنحاء الخرطوم منذ اليوم الأول.">
+            Specialist Company for Finishing &amp; Cleaning Services. Restoring life, polish, and comfort to homes and spaces across Khartoum since day one.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-en="Services" data-ar="خدماتنا">Services</h4>
+          <ul>
+            <li><a href="#services" data-en="Deep Cleaning" data-ar="التنظيف العميق">Deep Cleaning</a></li>
+            <li><a href="#services" data-en="Sofa Restoration" data-ar="ترميم الكنب">Sofa Restoration</a></li>
+            <li><a href="#services" data-en="Floor Polishing" data-ar="تلميع الأرضيات">Floor Polishing</a></li>
+            <li><a href="#services" data-en="Door Maintenance" data-ar="صيانة الأبواب">Door Maintenance</a></li>
+            <li><a href="#services" data-en="Car Detailing" data-ar="تلميع السيارات">Car Detailing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-en="Company" data-ar="الشركة">Company</h4>
+          <ul>
+            <li><a href="#home" data-en="Home" data-ar="الرئيسية">Home</a></li>
+            <li><a href="#portfolio" data-en="Our Work" data-ar="أعمالنا">Our Work</a></li>
+            <li><a href="#why" data-en="Why Choose Us" data-ar="لماذا نحن">Why Choose Us</a></li>
+            <li><a href="#contact" data-en="Contact" data-ar="اتصل بنا">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-en="Contact" data-ar="التواصل">Contact</h4>
+          <ul>
+            <li><a href="tel:+249127371927"><i class="fas fa-phone-alt" style="color:var(--gold);margin-right:6px;"></i>+249 12 737 1927</a></li>
+            <li><a href="tel:+249998981452"><i class="fas fa-phone-alt" style="color:var(--gold);margin-right:6px;"></i>+249 99 898 1452</a></li>
+            <li><a href="https://wa.me/249127371927"><i class="fab fa-whatsapp" style="color:var(--gold);margin-right:6px;"></i>WhatsApp</a></li>
+            <li><span style="font-size:.83rem;color:var(--gray-mid);"><i class="fas fa-map-marker-alt" style="color:var(--gold);margin-right:6px;"></i><span data-en="Khartoum, Sudan" data-ar="الخرطوم، السودان">Khartoum, Sudan</span></span></li>
+          </ul>
+        </div>
+
+      </div><!-- /footer-grid -->
+
+      <div class="footer-bottom">
+        <p>© 2026 <span data-en="Specialist Company for Finishing & Cleaning Services" data-ar="شركة الأخصائي لخدمات النظافة والتشطيب">Specialist Company for Finishing &amp; Cleaning Services</span>. <span data-en="All rights reserved." data-ar="جميع الحقوق محفوظة.">All rights reserved.</span></p>
+        <p data-en="Designed with care for the people of Khartoum." data-ar="صُمم بعناية لأهل الخرطوم.">Designed with care for the people of Khartoum.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== FLOATING WHATSAPP ===== -->
+  <a href="https://wa.me/249127371927?text=Hello%20Specialist%2C%20I%20visited%20your%20website%20and%20would%20like%20to%20enquire."
+     class="float-wa" aria-label="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+    <div class="float-wa-tooltip" data-en="Chat with us now!" data-ar="تحدث معنا الآن!">Chat with us now!</div>
+  </a>
+
+  <!-- ===== SCROLL TO TOP ===== -->
+  <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    /* ---------- Language Toggle ---------- */
+    let currentLang = 'en';
+
+    function toggleLang() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const root = document.getElementById('htmlRoot');
+      root.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+      root.setAttribute('lang', currentLang);
+      document.getElementById('langBtn').textContent = currentLang === 'en' ? 'عربي' : 'English';
+
+      // Update all translatable elements
+      document.querySelectorAll('[data-' + currentLang + ']').forEach(el => {
+        const val = el.getAttribute('data-' + currentLang);
+        if (val) el.innerHTML = val;
+      });
+
+      // Update placeholders
+      document.querySelectorAll('[data-placeholder-' + currentLang + ']').forEach(el => {
+        el.placeholder = el.getAttribute('data-placeholder-' + currentLang);
+      });
+
+      // Update select options
+      document.querySelectorAll('select option[data-' + currentLang + ']').forEach(opt => {
+        opt.textContent = opt.getAttribute('data-' + currentLang);
+      });
+    }
+
+    /* ---------- Mobile Nav ---------- */
+    function toggleMobileNav() {
+      const nav = document.getElementById('mobileNav');
+      const ham = document.getElementById('hamburger');
+      nav.classList.toggle('open');
+      ham.classList.toggle('open');
+      document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+    }
+
+    /* ---------- Header Scroll Effect ---------- */
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('mainHeader');
+      const scrollBtn = document.getElementById('scrollTop');
+      if (window.scrollY > 60) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+      if (window.scrollY > 400) {
+        scrollBtn.classList.add('visible');
+      } else {
+        scrollBtn.classList.remove('visible');
+      }
+    });
+
+    /* ---------- Before/After Slider ---------- */
+    function updateBA(id, val) {
+      const pct = val + '%';
+      const beforeImg = document.querySelector('#' + id + ' .ba-img-before');
+      const divider   = document.getElementById(id + '-divider');
+      const handle    = document.getElementById(id + '-handle');
+      const isRTL     = document.getElementById('htmlRoot').getAttribute('dir') === 'rtl';
+
+      if (isRTL) {
+        beforeImg.style.clipPath = 'inset(0 0 0 ' + pct + ')';
+        divider.style.right = pct;
+        divider.style.left  = 'auto';
+        handle.style.right  = pct;
+        handle.style.left   = 'auto';
+      } else {
+        beforeImg.style.clipPath = 'inset(0 ' + (100 - val) + '% 0 0)';
+        divider.style.left  = pct;
+        divider.style.right = 'auto';
+        handle.style.left   = pct;
+        handle.style.right  = 'auto';
+      }
+    }
+
+    /* ---------- Quote Form → WhatsApp ---------- */
+    function submitQuote() {
+      const name     = document.getElementById('qName').value.trim();
+      const phone    = document.getElementById('qPhone').value.trim();
+      const location = document.getElementById('qLocation').value.trim();
+      const service  = document.getElementById('qService').value;
+      const notes    = document.getElementById('qNotes').value.trim();
+
+      const isAr = currentLang === 'ar';
+
+      if (!name || !phone || !service) {
+        alert(isAr ? 'يرجى ملء الاسم ورقم الهاتف واختيار الخدمة.' : 'Please fill in your name, phone number, and select a service.');
+        return;
+      }
+
+      let msg = isAr
+        ? `مرحباً الأخصائي 👋\n\nأرغب في طلب خدمة:\n\n الاسم: ${name}\n الهاتف: ${phone}\n📍 الموقع: ${location || 'غير محدد'}\n🛎 الخدمة: ${service}\n${notes ? '📝 ملاحظات: ' + notes : ''}\n\nشكراً لكم!`
+        : `Hello Specialist 👋\n\nI'd like to request a service:\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📍 Location: ${location || 'Not specified'}\n🛎 Service: ${service}\n${notes ? '📝 Notes: ' + notes : ''}\n\nThank you!`;
+
+      const url = 'https://wa.me/249127371927?text=' + encodeURIComponent(msg);
+      window.open(url, '_blank');
+    }
+
+    /* ---------- Scroll Reveal Animation ---------- */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* ---------- Active Nav Highlight ---------- */
+    const sections = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        if (window.scrollY >= sec.offsetTop - 120) current = sec.getAttribute('id');
+      });
+      document.querySelectorAll('.nav-links a').forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--gold)' : '';
+      });
+    });
+  </script>
+
+</body>
+</html>

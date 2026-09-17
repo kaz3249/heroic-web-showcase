@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZERO STORE | Premium Digital Services</title>
+    <meta name="description" content="All Your Digital Services. One Place. Crypto, Cards, Gaming, Subscriptions & More.">
+    
+    <!-- Fonts: Space Grotesk (Display) + Inter (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Three.js & GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Custom Config matching Section 3 & 4 -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        zero: {
+                            black: '#050505',
+                            surface: '#0A0A0A',
+                            border: 'rgba(255,255,255,0.08)',
+                            silver: '#A0A0A0',
+                            white: '#FFFFFF',
+                            accent: '#E5E5E5'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Premium Glass Utilities */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* 3D Canvas Container */
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none; /* Allow clicking through to UI */
+        }
+
+        /* Smooth Scrollbar for Webkit */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease-out;
+        }
+        
+        .loader-ring {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-zero-black text-zero-white antialiased selection:bg-white/20">
+
+    <!-- LOADING SCREEN (Section 26) -->
+    <div id="loader">
+        <div class="text-center">
+            <div class="loader-ring mx-auto mb-4"></div>
+            <span class="font-display text-xl tracking-widest">ZERO STORE</span>
+        </div>
+    </div>
+
+    <!-- NAVIGATION (Section 9 & 10) -->
+    <nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="font-display text-2xl font-bold tracking-tighter z-50 relative">ZERO STORE</a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-zero-silver">
+                <a href="#services" class="hover:text-white transition-colors">Services</a>
+                <a href="#world" class="hover:text-white transition-colors">Digital World</a>
+                <a href="#about" class="hover:text-white transition-colors">Why Us</a>
+                <button onclick="openModal()" class="ml-4 px-6 py-2.5 bg-white text-black font-semibold rounded-full hover:bg-zero-accent transition-all transform hover:scale-105 active:scale-95">
+                    Request Service
+                </button>
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <button id="mobile-menu-btn" class="md:hidden z-50 text-white p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 bg-zero-black z-40 transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center gap-8 text-2xl font-display">
+            <a href="#services" class="mobile-link hover:text-zero-silver">Services</a>
+            <a href="#world" class="mobile-link hover:text-zero-silver">Digital World</a>
+            <a href="#about" class="mobile-link hover:text-zero-silver">Why Us</a>
+            <button onclick="openModal(); closeMobileMenu();" class="mt-4 px-8 py-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all">Request Service</button>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION (Section 11 & 12) -->
+    <header class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <div id="hero-canvas"></div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-6 w-full grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-8 max-w-2xl hero-content opacity-0 translate-y-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-zero-silver uppercase tracking-wider">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                    Now Serving Sudan & Beyond
+                </div>
+                
+                <h1 class="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tight">
+                    ALL YOUR <br/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">DIGITAL SERVICES.</span><br/>
+                    ONE PLACE.
+                </h1>
+                
+                <p class="text-lg md:text-xl text-zero-silver max-w-lg leading-relaxed">
+                    Crypto, virtual cards, gaming top-ups, subscriptions, travel & design. 
+                    Premium service delivery without the complexity.
+                </p>
+                
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="#services" class="px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-zero-accent transition-all transform hover:-translate-y-1 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                        Explore Services
+                    </a>
+                    <button onclick="openModal()" class="px-8 py-4 glass-panel text-white font-semibold rounded-full hover:bg-white/10 transition-all">
+                        Request Service
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile-only static fallback hint / spacer for 3D -->
+            <div class="hidden md:block"></div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 animate-bounce">
+            <span class="text-[10px] uppercase tracking-widest">Scroll</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </div>
+    </header>
+
+    <!-- SERVICES GRID (Section 13 & 14) -->
+    <section id="services" class="py-32 relative z-10 bg-zero-black">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-20 max-w-3xl section-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">Everything You Need.<br/>In One Store.</h2>
+                <p class="text-zero-silver text-lg">Explore our premium digital services. Click any category to view details or request immediately.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="services-grid">
+                <!-- Cards injected via JS below -->
+            </div>
+        </div>
+    </section>
+
+    <!-- DIGITAL WORLD SECTION (Section 19) -->
+    <section id="world" class="py-40 relative overflow-hidden border-t border-white/5">
+        <div class="absolute inset-0 bg-gradient-to-b from-zero-black via-zero-surface to-zero-black pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10 text-center section-reveal">
+            <h2 class="font-display text-4xl md:text-6xl font-bold mb-8 tracking-tight">ONE STORE.<br/>ENDLESS POSSIBILITIES.</h2>
+            <div class="flex flex-wrap justify-center gap-4 md:gap-8 text-zero-silver font-display text-lg md:text-2xl uppercase tracking-widest opacity-80">
+                <span class="hover:text-white transition-colors cursor-default">Pay</span> • 
+                <span class="hover:text-white transition-colors cursor-default">Trade</span> • 
+                <span class="hover:text-white transition-colors cursor-default">Play</span> • 
+                <span class="hover:text-white transition-colors cursor-default">Design</span> • 
+                <span class="hover:text-white transition-colors cursor-default">Travel</span> • 
+                <span class="hover:text-white transition-colors cursor-default">Create</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY ZERO STORE (Section 20) -->
+    <section id="about" class="py-32 bg-zero-surface">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="glass-panel p-8 rounded-2xl section-reveal">
+                    <div class="text-3xl mb-4">⚡</div>
+                    <h3 class="font-display text-xl font-bold mb-2">Fast Delivery</h3>
+                    <p class="text-zero-silver text-sm leading-relaxed">Organized workflows ensuring your digital services are delivered with speed and precision.</p>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl section-reveal">
+                    <div class="text-3xl mb-4">🔒</div>
+                    <h3 class="font-display text-xl font-bold mb-2">Trusted & Secure</h3>
+                    <p class="text-zero-silver text-sm leading-relaxed">Transparent communication and secure handling of all transactions and account data.</p>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl section-reveal">
+                    <div class="text-3xl mb-4">💰</div>
+                    <h3 class="font-display text-xl font-bold mb-2">Competitive Rates</h3>
+                    <p class="text-zero-silver text-sm leading-relaxed">Premium service quality doesn't have to mean premium prices. Fair value guaranteed.</p>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl section-reveal">
+                    <div class="text-3xl mb-4">🌐</div>
+                    <h3 class="font-display text-xl font-bold mb-2">Global Standard</h3>
+                    <p class="text-zero-silver text-sm leading-relaxed">Built for Sudan, designed for the world. International quality digital solutions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT / CTA (Section 23 & 24) -->
+    <section class="py-32 relative">
+        <div class="max-w-4xl mx-auto px-6 text-center section-reveal">
+            <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">Can't Find What You Need?</h2>
+            <p class="text-zero-silver text-lg mb-10 max-w-2xl mx-auto">Tell us what you need. We'll check if we can provide it. Our team handles custom digital requests daily.</p>
+            <button onclick="openModal('Custom Request')" class="px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:bg-zero-accent transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                Request a Custom Service
+            </button>
+        </div>
+    </section>
+
+    <!-- FOOTER (Section 25) -->
+    <footer class="border-t border-white/5 py-16 bg-zero-black">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start gap-12">
+            <div class="max-w-sm">
+                <span class="font-display text-2xl font-bold block mb-4">ZERO STORE</span>
+                <p class="text-zero-silver text-sm leading-relaxed mb-6">
+                    Premium digital services platform. Crypto, payments, gaming, subscriptions, design, travel and more.
+                </p>
+                <div class="text-xs text-white/30">© 2024 ZERO STORE. All rights reserved.</div>
+            </div>
+            
+            <div class="flex gap-16">
+                <div>
+                    <h4 class="font-bold mb-4 text-sm uppercase tracking-wider text-white/50">Platform</h4>
+                    <ul class="space-y-3 text-sm text-zero-silver">
+                        <li><a href="#services" class="hover:text-white transition-colors">Services</a></li>
+                        <li><a href="#about" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-sm uppercase tracking-wider text-white/50">Connect</h4>
+                    <ul class="space-y-3 text-sm text-zero-silver">
+                        <li><button onclick="openModal()" class="hover:text-white transition-colors">WhatsApp</button></li>
+                        <li><button onclick="openModal()" class="hover:text-white transition-colors">Telegram</button></li>
+                        <li><button onclick="openModal()" class="hover:text-white transition-colors">Email Support</button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- REQUEST MODAL (Section 16) -->
+    <div id="request-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg p-6">
+            <div class="glass-panel rounded-3xl p-8 relative shadow-2xl border border-white/10 bg-[#0A0A0A]/95">
+                <button onclick="closeModal()" class="absolute top-6 right-6 text-white/50 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <h3 class="font-display text-2xl font-bold mb-2">Request Service</h3>
+                <p class="text-zero-silver text-sm mb-8">Fill out the form below and we'll get back to you via your preferred channel.</p>
+                
+                <form onsubmit="event.preventDefault(); alert('Demo: Request sent successfully!'); closeModal();" class="space-y-5">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-white/50 mb-2">Service Needed</label>
+                        <input type="text" id="modal-service-input" readonly class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/30 transition-colors" placeholder="Select a service...">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-white/50 mb-2">Your Request Details</label>
+                        <textarea rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/30 transition-colors resize-none" placeholder="E.g., I need 50 USDT transferred to..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-white/50 mb-2">Preferred Contact</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="contact" class="peer sr-only" checked>
+                                <div class="text-center py-3 rounded-xl border border-white/10 peer-checked:bg-white peer-checked:text-black text-zero-silver text-sm font-medium transition-all hover:bg-white/5">WhatsApp</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="contact" class="peer sr-only">
+                                <div class="text-center py-3 rounded-xl border border-white/10 peer-checked:bg-white peer-checked:text-black text-zero-silver text-sm font-medium transition-all hover:bg-white/5">Telegram</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="contact" class="peer sr-only">
+                                <div class="text-center py-3 rounded-xl border border-white/10 peer-checked:bg-white peer-checked:text-black text-zero-silver text-sm font-medium transition-all hover:bg-white/5">Email</div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-zero-accent transition-all mt-4">
+                        Send Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- CONFIGURATION (Section 17 & 33) ---
+        const SERVICES = [
+            { id: 'crypto', num: '01', title: 'Crypto', desc: 'Buy/sell USDT, wallet top-ups & digital assets.', icon: '₿' },
+            { id: 'cards', num: '02', title: 'Cards & Payments', desc: 'RedotPay, Bybit, KAST Visa & virtual card services.', icon: '💳' },
+            { id: 'gaming', num: '03', title: 'Gaming', desc: 'PUBG, Free Fire top-ups & gaming services.', icon: '🎮' },
+            { id: 'subs', num: '04', title: 'Subscriptions', desc: 'ChatGPT Plus, Netflix, Canva Pro & more.', icon: '⭐' },
+            { id: 'internet', num: '05', title: 'Internet & Bills', desc: 'Starlink, bill payments & connectivity.', icon: '📡' },
+            { id: 'social', num: '06', title: 'Social Media', desc: 'Growth services, verification & management.', icon: '👥' },
+            { id: 'design', num: '07', title: 'Design & Marketing', desc: 'Logos, posters, ads & creative content.', icon: '🎨' },
+            { id: 'travel', num: '08', title: 'Travel & Flights', desc: 'Tickets for TARCO, Badr, SudanAir & global.', icon: '✈️' },
+            { id: 'other', num: '09', title: 'Other Services', desc: 'Custom digital requests & specialized tasks.', icon: '✨' },
+        ];
+
+        // --- RENDER SERVICES GRID ---
+        const grid = document.getElementById('services-grid');
+        SERVICES.forEach((s, i) => {
+            const card = document.createElement('div');
+            card.className = 'glass-panel p-8 rounded-3xl group hover:-translate-y-2 transition-all duration-500 cursor-pointer section-reveal';
+            card.style.transitionDelay = `${i * 50}ms`;
+            card.onclick = () => openModal(s.title);
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-6">
+                    <span class="text-zero-silver text-sm font-mono">${s.num}</span>
+                    <span class="text-3xl grayscale group-hover:grayscale-0 transition-all duration-500">${s.icon}</span>
+                </div>
+                <h3 class="font-display text-2xl font-bold mb-3 group-hover:text-white transition-colors">${s.title}</h3>
+                <p class="text-zero-silver text-sm leading-relaxed mb-6">${s.desc}</p>
+                <div class="flex items-center text-xs font-bold uppercase tracking-wider text-white/50 group-hover:text-white transition-colors">
+                    View Services <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        // --- MODAL LOGIC ---
+        const modal = document.getElementById('request-modal');
+        const serviceInput = document.getElementById('modal-service-input');
+        
+        function openModal(serviceName = '') {
+            serviceInput.value = serviceName;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // --- MOBILE MENU ---
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        
+        mobileBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if(menuOpen) {
+                mobileMenu.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            } else {
+                closeMobileMenu();
+            }
+        });
+        
+        function closeMobileMenu() {
+            menuOpen = false;
+            mobileMenu.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+        }
+        
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // --- THREE.JS HERO SCENE (Section 5, 6, 7) ---
+        function init3D() {
+            const container = document.getElementById('hero-canvas');
+            const scene = new THREE.Scene();
+            
+            // Fog for depth fading
+            scene.fog = new THREE.FogExp2(0x050505, 0.002);
+            
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+            
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performance cap
+            container.appendChild(renderer.domElement);
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const pointLight = new THREE.PointLight(0xffffff, 1);
+            pointLight.position.set(5, 5, 5);
+            scene.add(pointLight);
+            
+            const blueLight = new THREE.PointLight(0x4444ff, 2);
+            blueLight.position.set(-5, -5, 5);
+            scene.add(blueLight);
+
+            // Central Abstract Orb (Glass/Metallic feel via wireframe + inner core)
+            const geometry = new THREE.IcosahedronGeometry(1.5, 1);
+            const material = new THREE.MeshStandardMaterial({ 
+                color: 0x111111, 
+                roughness: 0.2, 
+                metalness: 0.8,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const orb = new THREE.Mesh(geometry, material);
+            scene.add(orb);
+            
+            // Inner Core
+            const coreGeo = new THREE.SphereGeometry(0.8, 32, 32);
+            const coreMat = new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0, metalness: 1 });
+            const core = new THREE.Mesh(coreGeo, coreMat);
+            scene.add(core);
+
+            // Floating Particles
+            const particlesGeo = new THREE.BufferGeometry();
+            const count = window.innerWidth < 768 ? 300 : 1000; // Reduced on mobile
+            const positions = new Float32Array(count * 3);
+            
+            for(let i = 0; i < count * 3; i++) {
+                positions[i] = (Math.random() - 0.5) * 20;
+            }
+            
+            particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const particlesMat = new THREE.PointsMaterial({ size: 0.02, color: 0xffffff, transparent: true, opacity: 0.5 });
+            const particles = new THREE.Points(particlesGeo, particlesMat);
+            scene.add(particles);
+
+            // Mouse Interaction State
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+            
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+            
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX) * 0.001;
+                mouseY = (event.clientY - windowHalfY) * 0.001;
+            });
+
+            // Animation Loop
+            const clock = new THREE.Clock();
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                const elapsedTime = clock.getElapsedTime();
+                
+                // Constant rotation
+                orb.rotation.y += 0.002;
+                orb.rotation.x += 0.001;
+                core.rotation.y -= 0.003;
+                particles.rotation.y = elapsedTime * 0.05;
+                
+                // Smooth mouse parallax (Desktop only effectively due to no mousemove on mobile)
+                targetX = mouseX * 0.5;
+                targetY = mouseY * 0.5;
+                
+                orb.rotation.y += 0.05 * (targetX - orb.rotation.y);
+                orb.rotation.x += 0.05 * (targetY - orb.rotation.x);
+                
+                // Gentle floating
+                orb.position.y = Math.sin(elapsedTime * 0.5) * 0.1;
+                core.position.y = Math.sin(elapsedTime * 0.5) * 0.1;
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Resize Handler
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // --- INITIALIZATION & ANIMATIONS ---
+        window.addEventListener('load', () => {
+            // Hide Loader
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => loader.remove(), 800);
+            
+            // Init 3D
+            init3D();
+            
+            // Hero Content Reveal
+            gsap.to('.hero-content', { opacity: 1, y: 0, duration: 1, delay: 0.5, ease: 'power3.out' });
+            
+            // Scroll Reveals
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray('.section-reveal').forEach(section => {
+                gsap.fromTo(section, 
+                    { opacity: 0, y: 50 },
+                    { 
+                        opacity: 1, 
+                        y: 0, 
+                        duration: 1, 
+                        ease: 'power3.out',
+                        scrollTrigger: { trigger: section, start: 'top 85%' }
+                    }
+                );
+            });
+        });
+    </script>
+</body>
+</html>
