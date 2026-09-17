@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#000000" />
+  <title>prmpt — synthetic archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500&display=swap" rel="stylesheet" />
+
+  <script type="importmap">
+  { "imports": {
+      "react": "https://esm.sh/react@19.1.0",
+      "react-dom/client": "https://esm.sh/react-dom@19.1.0/client?external=react",
+      "htm": "https://esm.sh/htm@3.1.1"
+  } }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body, #root { height: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+    body {
+      font-family: 'Inter Tight', system-ui, sans-serif; font-weight: 500;
+      background: #fff; overscroll-behavior: none; -webkit-font-smoothing: antialiased;
+      color: #000;
+    }
+    body::-webkit-scrollbar { width: 0; background: transparent; }
+    body { scrollbar-width: none; }
+    button { font-family: inherit; font-weight: 500; background: none; border: none; padding: 0; color: inherit; cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    input, textarea { font-family: inherit; font-weight: 500; }
+    @media (min-width: 1024px) {
+      body.cursor-hidden, body.cursor-hidden * { cursor: none !important; }
+    }
+    .bp-card { will-change: transform; }
+
+    @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+
+    .enter-slide { opacity: 0; animation: fadeSlideUp .6s cubic-bezier(.25,.1,.25,1) forwards; }
+    .enter-fade  { opacity: 0; animation: fadeIn .6s cubic-bezier(.25,.1,.25,1) forwards; }
+    .page-enter  { opacity: 0; animation: fadeSlideUp .7s cubic-bezier(.25,.1,.25,1) forwards; }
+    .pulse { animation: pulse 1.2s ease-in-out infinite; }
+
+    .cursor-inner { transition: transform .25s cubic-bezier(.25,.1,.25,1); display: block; }
+    .cursor-inner.big { transform: scale(1.6); }
+    .cursor-inner.click { transform: scale(.7); }
+
+    .menu-row { display: flex; align-items: baseline; gap: 4vw; width: 100%;
+      text-align: left; padding: 2.2vh 0; border-top: 1px solid rgba(255,255,255,.22);
+      color: #fff; transition: background .3s, color .3s, padding-left .3s; }
+    .menu-row:hover { background: #fff; color: #000; padding-left: 2vw; }
+    .menu-row .idx { font-size: 13px; letter-spacing: -.02em; opacity: .6; min-width: 3ch; }
+    .menu-row .ttl { font-size: clamp(40px, 8.5vw, 120px); line-height: .95; letter-spacing: -.04em; text-transform: uppercase; }
+    .menu-row .dsc { margin-left: auto; font-size: 12px; letter-spacing: -.02em; text-transform: uppercase; opacity: .6; }
+
+    .marquee-track { display: inline-flex; white-space: nowrap; animation: marquee 28s linear infinite; }
+
+    .look-card .look-img { transition: transform .8s cubic-bezier(.25,.1,.25,1); }
+    .look-card:hover .look-img { transform: scale(1.05); }
+    .look-card .look-add { opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
+    .look-card:hover .look-add { opacity: 1; transform: none; }
+    @media (hover: none) { .look-card .look-add { opacity: 1; transform: none; } }
+
+    .link-u { position: relative; display: inline-block; }
+    .link-u::after { content: ''; position: absolute; left: 0; bottom: -3px; width: 100%; height: 1px;
+      background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .35s cubic-bezier(.25,.1,.25,1); }
+    .link-u:hover::after { transform: scaleX(1); transform-origin: left; }
+
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(255,255,255,.22); }
+    .stat-row:last-child { border-bottom: 1px solid rgba(255,255,255,.22); }
+    .stat-row > div { padding: 22px 0; }
+    .stat-row > div + div { padding-left: 24px; border-left: 1px solid rgba(255,255,255,.22); }
+    .stat-row.dark { border-color: rgba(0,0,0,.2); }
+    .stat-row.dark > div + div { border-color: rgba(0,0,0,.2); }
+
+    .clause { display: grid; grid-template-columns: 60px 1fr; gap: 20px; padding: 26px 0;
+      border-top: 1px solid rgba(255,255,255,.18); font-size: 14px; line-height: 150%; letter-spacing: -.02em; }
+    .clause .num { opacity: .5; }
+
+    .pill { display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 999px; letter-spacing: -.04em; transition: transform .3s, background .3s, color .3s; }
+    .pill:hover { transform: scale(1.03); }
+    .pill:active { transform: scale(.97); }
+    .pill.sq { border-radius: 4px; }
+
+    .cart-line { display: grid; grid-template-columns: 72px 1fr auto auto; gap: 20px; align-items: center;
+      padding: 20px 0; border-top: 1px solid rgba(0,0,0,.15); }
+    .cart-line:last-of-type { border-bottom: 1px solid rgba(0,0,0,.15); }
+
+    .x-btn { font-size: 14px; letter-spacing: -.02em; text-transform: uppercase; transition: opacity .2s; }
+    .x-btn:hover { opacity: .55; }
+
+    .size-btn {
+      width: 100%; padding: 12px 0; font-size: 13px; letter-spacing: -.02em;
+      border: 1px solid rgba(255,255,255,.25); border-radius: 2px;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+    .size-btn.active { background: #fff; color: #000; border-color: #fff; }
+    .size-btn:hover:not(.active) { background: rgba(255,255,255,.1); }
+
+    .journal-entry { display: grid; grid-template-columns: 120px 1fr; gap: 28px; padding: 36px 0;
+      border-top: 1px solid rgba(255,255,255,.22); align-items: start; }
+    .journal-entry .jnum { font-size: 12px; letter-spacing: -.02em; text-transform: uppercase; opacity: .5; padding-top: 8px; }
+    .journal-entry .jdate { font-size: 11px; letter-spacing: -.02em; text-transform: uppercase; opacity: .4; margin-bottom: 10px; }
+    .journal-entry .jtitle { font-size: clamp(22px, 2.6vw, 32px); line-height: 1.05; letter-spacing: -.03em; text-transform: uppercase; margin-bottom: 14px; }
+    .journal-entry .jbody { font-size: 14px; line-height: 160%; letter-spacing: -.02em; max-width: 60ch; }
+
+    .contact-field { width: 100%; background: transparent; border: none;
+      border-bottom: 1px solid rgba(255,255,255,.3); color: #fff; padding: 14px 0;
+      font-size: 16px; letter-spacing: -.02em; outline: none; transition: border-color .3s; }
+    .contact-field:focus { border-color: #fff; }
+    .contact-field::placeholder { color: rgba(255,255,255,.3); }
+    textarea.contact-field { resize: vertical; min-height: 120px; }
+
+    @media (max-width: 639px) {
+      .journal-entry { grid-template-columns: 1fr; gap: 10px; }
+      .journal-entry .jnum { padding-top: 0; }
+      .stat-row > div + div { padding-left: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bp-card { will-change: auto; transform: scale(1) !important; }
+      .enter-slide, .enter-fade, .page-enter { animation: none; opacity: 1; transform: none; }
+      .marquee-track { animation: none; }
+      * { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="module">
+    import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
+    import ReactDOM from 'react-dom/client';
+    import htm from 'htm';
+    const html = htm.bind(React.createElement);
+
+    /* ---------------- ASSETS ---------------- */
+    const LEFT_VIDEO = 'https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154433_532a85d3-dabf-4265-b8bd-19ac6af31842.mp4';
+    const RIGHT_VIDEO = 'https://d8j0ntlcm91z4.cloudfront.net/user_39ca84eAE1ODL9hbR5VhoEj8tBf/hf_20260625_154401_a664f076-b971-4557-8728-40ef9ea4c49b.mp4';
+    const GALLERY_IMAGES = [
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_104530_521b2f85-c0f3-4d0e-9704-b578315b4cb9.png&w=1920&q=85',
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_103711_76ccdb8b-5043-4f47-9c54-4379713393ea.png&w=1920&q=85',
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_103728_394f6a1b-85e2-4386-a4f6-408472a0a5b7.png&w=1920&q=85',
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_103739_86743e0e-16a7-4bee-bf38-dd67985344dc.png&w=1920&q=85',
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_103748_b2215dc8-a3a7-470d-b19a-5b87fa7d0c37.png&w=1920&q=85',
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_103758_e919ce72-5c9d-4b87-9be6-d7647b34825c.png&w=1920&q=85',
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_103808_013583d0-3386-4547-9832-37c7d8edb3ac.png&w=1920&q=85',
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_103937_a0c49d0a-33eb-4ead-aea6-c1baf241acbc.png&w=1920&q=85',
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_103956_d18ed8fd-7b6f-4b86-91f9-20010fe38670.png&w=1920&q=85',
+      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_104034_ba5a9963-87ff-4008-a545-6bd686c088b5.png&w=1920&q=85',
+    ];
+    const NAMES  = ['GHOST SHELL','STATIC BLOOM','ZERO SHOT','LATENT DRIFT','TOKEN SKIN','NOISE GATE','SIGNAL LOSS','GRADIENT BURN','ECHO CHAMBER','FINAL PROMPT'];
+    const PRICES = [42000, 38000, 29000, 34000, 26000, 31000, 27500, 36000, 24500, 52000];
+    const DESCRIPTIONS = [
+      'A second skin rendered in static. The silhouette dissolves at the hem, as though the wearer is already halfway out of frame.',
+      'Floral motifs generated from 4,000 iterations of the word "bloom." None of them look like flowers. They look like memory.',
+      'Produced in a single inference pass. No revisions, no samples, no mercy.',
+      'A coat cut from the drift between two adjacent latents. It fits differently every time you put it on.',
+      'Token-by-token tailoring. Each seam is a delimiter. Each pocket a context window.',
+      'The noise floor, made wearable. A low hum in textile form.',
+      'A garment that stops transmitting when you stop moving. Walk to be seen.',
+      'Gradient descent across the shoulder. The burn is intentional.',
+      'Every reflection contains the previous reflection. Wear it in a room with mirrors and wait.',
+      'The last prompt we will ever type. We are satisfied.',
+    ];
+    const MATERIALS = [
+      ['97% RECYCLED NYLON','3% MEMORY THREAD','MILLED IN PORTUGAL'],
+      ['COTTON SATIN — 240 GSM','BONDED LINING','CUT IN ANTWERP'],
+      ['TECHNICAL WOOL BLEND','HEAT-SEALED SEAMS','CONSTRUCTED IN OSAKA'],
+      ['RECYCLED POLYESTER','REFLECTIVE YARN','DYED IN MILAN'],
+      ['MERINO — 18.5 MICRON','MOHAIR BLEND','SPUN IN BIELLA'],
+      ['WATERPROOF TAFFETA','TAPED SEAMS','MADE IN REYKJAVIK'],
+      ['RAW SILK','MESH UNDERLAY','HAND-FINISHED IN KYOTO'],
+      ['RECYCLED POLYAMIDE','ELASTANE 8%','CONSTRUCTED IN LISBON'],
+      ['ORGANIC COTTON','VEGAN LEATHER TRIM','MADE IN MEXICO CITY'],
+      ['TECHNICAL CASHMERE','SILK INTERLINING','CUT IN PARIS'],
+    ];
+    const SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL'];
+    const PRODUCTS = GALLERY_IMAGES.map((src, i) => ({ id: i, src, name: NAMES[i], cents: PRICES[i], description: DESCRIPTIONS[i], materials: MATERIALS[i] }));
+    const money = (c) => '$' + (c / 100).toFixed(2).replace('.', ',');
+
+    const JOURNAL = [
+      { num: '001', date: '2026.09.01', title: 'THE FIRST PROMPT', body: 'We typed: "Something no one has worn before." The machine returned a jacket. It had seven sleeves. We kept going.' },
+      { num: '002', date: '2026.08.14', title: 'ITERATION 1,024', body: 'Iteration 1,024 was the one. Iterations 1 through 1,023 were deleted at 4:17 AM on a Tuesday. We do not keep the failures. Failures are a form of sentimentality.' },
+      { num: '003', date: '2026.07.22', title: 'WE DO NOT SKETCH', body: 'Sketching is a confession. We prompt. A prompt is a question asked by a machine, answered by a machine, and worn by a human who did not know the question.' },
+      { num: '004', date: '2026.07.03', title: 'THE MODEL REFUSED', body: 'The model refused the word "sexy." It returned a grey coat instead. We kept the grey coat. It is now Look 004.' },
+      { num: '005', date: '2026.06.29', title: 'A CUSTOMER IN SEOUL', body: 'A customer in Seoul wrote: "It fits like a memory I did not have." We saved the email. We did not reply. The garment replied.' },
+      { num: '006', date: '2026.06.18', title: 'EVERY DROP IS A DELETION', body: 'When a look sells out, the prompt is erased from our servers. What you own becomes the last instance of its own origin. This is the point.' },
+      { num: '007', date: '2026.06.02', title: 'ON SEASONS', body: 'We do not do seasons. Seasons imply weather. Weather implies place. PRMPT ships from everywhere and nowhere. We drop when the machine agrees.' },
+      { num: '008', date: '2026.05.19', title: 'THE STUDIO', body: 'The studio is a laptop in a kitchen in a city we will not name. There is no moodboard. There is a browser history. It is mostly deleted.' },
+    ];
+
+    const SHIPPING_CLAUSES = [
+      ['01', 'WORLDWIDE DELIVERY — 7 TO 14 WORKING DAYS. WE SHIP FROM A SERVER, NOT A WAREHOUSE.'],
+      ['02', 'DUTIES AND TAXES CALCULATED AT CHECKOUT. NOTHING SURPRISES YOU AT THE DOOR.'],
+      ['03', 'FREE RETURNS WITHIN 14 DAYS. ITEM MUST BE UNWORN, UNWASHED, UNREGRETTED.'],
+      ['04', 'WE ACCEPT RETURNS OF CLOTHING. WE DO NOT ACCEPT RETURNS OF OPINIONS.'],
+      ['05', 'LOST PACKAGE? WAIT 30 DAYS. THEN WRITE US. WE WILL LOOK.'],
+      ['06', 'TRACKING IS SENT WITHIN 24 HOURS. IF IT IS NOT, CHECK YOUR SPAM.'],
+    ];
+
+    const PRIVACY_CLAUSES = [
+      ['01', 'WE COLLECT NOTHING. NO COOKIES, NO TRACKERS, NO PIXELS, NO REGRET. THIS PAGE REMEMBERS YOU FOR EXACTLY AS LONG AS YOU REMEMBER IT.'],
+      ['02', 'YOUR CART EXISTS ONLY IN YOUR BROWSER. CLOSE THE TAB AND IT NEVER HAPPENED. WE RESPECT A CLEAN CONTEXT WINDOW.'],
+      ['03', 'THE CAMERA LOVES YOU ANYWAY. IF YOU UPLOAD ANYTHING TO US IN THE FUTURE, IT BECOMES PART OF THE PROMPT. YOU HAVE BEEN WARNED.'],
+      ['04', 'THIRD PARTIES: THE VIDEOS AND IMAGES LIVE ON CLOUDS THAT ARE NOT OURS. THEY SERVE FILES, NOT OPINIONS.'],
+      ['05', 'YOUR RIGHT TO BE FORGOTTEN IS ABSOLUTE, MOSTLY BECAUSE WE NEVER KNEW YOU IN THE FIRST PLACE.'],
+      ['06', 'THIS POLICY MAY CHANGE WITHOUT NOTICE, LIKE ANY GOOD PROMPT. LAST UPDATED: 2026.06.29 — ITERATION 1,024.'],
+    ];
+
+    const CIRCLE_SYMBOLS = ['8', '$', '^^', '%', '/'];
+    const BP = { mobile: 640, tablet: 1024 };
+    const EASE = 'cubic-bezier(.76, 0, .24, 1)';
+
+    function buildLayout(count, cols) {
+      const rows = []; let i = 0, r = 0;
+      while (i < count) {
+        const row = new Array(cols).fill(-1);
+        const a = (r * 2 + (r % 2)) % cols;
+        row[a] = i++;
+        if (r % 3 === 0 && i < count) { let b = (a + 2) % cols; if (b === a) b = (a + 1) % cols; row[b] = i++; }
+        rows.push(row); r++;
+      }
+      return rows;
+    }
+
+    const hashToView = (h) => ({
+      '#/': 'home',
+      '#/about': 'about',
+      '#/archive': 'archive',
+      '#/journal': 'journal',
+      '#/cart': 'cart',
+      '#/shipping': 'shipping',
+      '#/privacy': 'privacy',
+      '#/contact': 'contact',
+    }[h] || 'home');
+
+    const TITLES = {
+      home: 'prmpt — synthetic archive',
+      about: 'prmpt — about',
+      archive: 'prmpt — archive',
+      journal: 'prmpt — journal',
+      cart: 'prmpt — cart',
+      shipping: 'prmpt — shipping',
+      privacy: 'prmpt — privacy',
+      contact: 'prmpt — contact',
+    };
+
+    /* ---------------- ICONS ---------------- */
+    const CursorGlyph = () => html`
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style=${{ display: 'block' }}>
+        <circle cx="24" cy="24" r="22.75" stroke="white" strokeWidth="2.5" />
+        <path d="M16 16 C16 16, 24 14, 32 16 L32 18 C32 18, 24 16, 16 18 Z M20 20 L20 32 L22 32 L22 26 L26 26 L26 32 L28 32 L28 20 L26 20 L26 24 L22 24 L22 20 Z M16 34 C20 33, 28 33, 32 34 L32 36 C28 35, 20 35, 16 36 Z" fill="white" />
+      </svg>`;
+
+    const LogoSvg = ({ width }) => html`
+      <svg viewBox="0 0 355 110" fill="none" style=${{ width: width || '100%', height: 'auto', display: 'block' }}>
+        <path d="M10 30 L10 80 L16 80 L16 68 C18 74, 24 78, 32 78 C44 78, 52 68, 52 54 C52 40, 44 30, 32 30 C24 30, 18 34, 16 40 L16 30 Z M22 42 C22 36, 26 32, 32 32 C40 32, 44 40, 44 54 C44 68, 40 76, 32 76 C26 76, 22 72, 22 66 Z" fill="currentColor" />
+        <path d="M62 30 L62 80 L70 80 L70 62 C70 48, 78 40, 88 40 L88 32 C78 32, 72 38, 70 44 L70 30 Z" fill="currentColor" />
+        <path d="M98 30 L98 80 L106 80 L106 68 L122 80 L134 80 L116 66 C126 62, 132 54, 132 44 C132 34, 124 30, 114 30 Z M106 38 L114 38 C122 38, 124 42, 124 46 C124 52, 120 56, 112 56 L106 56 Z" fill="currentColor" />
+        <path d="M142 30 L142 80 L150 80 L150 62 C150 48, 158 40, 168 40 L168 32 C158 32, 152 38, 150 44 L150 30 Z" fill="currentColor" />
+        <path d="M178 30 L178 80 L186 80 L186 56 L210 80 L222 80 L196 54 L220 30 L208 30 L186 52 L186 30 Z" fill="currentColor" />
+        <g transform="translate(240, 42)">
+          <circle cx="24" cy="24" r="22.75" stroke="currentColor" strokeWidth="2.5" fill="none" />
+          <path d="M16 12 L16 36 L19 36 L19 26 L26 26 L32 36 L36 36 L29 25 C33 24, 35 21, 35 17 C35 13, 31 12, 26 12 Z M19 15 L26 15 C29 15, 31 16, 31 18 C31 21, 29 23, 26 23 L19 23 Z" fill="currentColor" />
+        </g>
+      </svg>`;
+
+    const HamburgerIcon = ({ size = 30 }) => html`
+      <svg width=${size} height=${size} viewBox="0 0 40 40" fill="none" style=${{ display: 'block' }}>
+        <path d="M0 14H40" stroke="white" strokeWidth="2.5" />
+        <path d="M0 26H40" stroke="white" strokeWidth="2.5" />
+      </svg>`;
+
+    const CircleIcon = ({ size = 30, sw = 2.5 }) => html`
+      <svg width=${size} height=${size} viewBox="0 0 40 40" fill="none" style=${{ display: 'block' }}>
+        <circle cx="20" cy="20" r="18.75" stroke="white" strokeWidth=${sw} />
+      </svg>`;
+
+    /* ---------------- HOOKS ---------------- */
+    const getBp = () => { const w = window.innerWidth; return w < BP.mobile ? 'mobile' : w < BP.tablet ? 'tablet' : 'desktop'; };
+    function useBreakpoint() {
+      const [bp, setBp] = useState(getBp);
+      useEffect(() => { const u = () => setBp(getBp()); window.addEventListener('resize', u); return () => window.removeEventListener('resize', u); }, []);
+      return bp;
+    }
+    function useIsTouch() {
+      const [t, setT] = useState(() => window.matchMedia('(pointer: coarse)').matches);
+      useEffect(() => { const c = () => setT(window.matchMedia('(pointer: coarse)').matches); window.addEventListener('resize', c); return () => window.removeEventListener('resize', c); }, []);
+      return t;
+    }
+
+    /* ---------------- OVERLAY SHELL ---------------- */
+    function Overlay({ onClose, bg, fg, children, onBack }) {
+      const [entered, setEntered] = useState(false);
+      const [leaving, setLeaving] = useState(false);
+      useEffect(() => {
+        const r = requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
+        return () => cancelAnimationFrame(r);
+      }, []);
+      const close = useCallback(() => {
+        if (leaving) return;
+        setLeaving(true);
+        setTimeout(() => (onBack || onClose)(), 680);
+      }, [leaving, onBack, onClose]);
+      useEffect(() => {
+        const onKey = (e) => { if (e.key === 'Escape') close(); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+      }, [close]);
+      return html`
+        <div style=${{
+          position: 'fixed', inset: 0, zIndex: 60, background: bg, color: fg,
+          transform: entered && !leaving ? 'translateY(0)' : 'translateY(100%)',
+          transition: 'transform .65s ' + EASE,
+          display: 'flex', flexDirection: 'column', overflowY: 'auto', overscrollBehavior: 'contain'
+        }}>
+          ${typeof children === 'function' ? children(close) : children}
+        </div>`;
+    }
+
+    const PageHeader = ({ onBack, label, fg }) => html`
+      <div style=${{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '20px 24px', borderBottom: '1px solid ' + (fg === '#000' ? 'rgba(0,0,0,.15)' : 'rgba(255,255,255,.2)') }}>
+        <button data-hover class="x-btn" onClick=${onBack}>← BACK</button>
+        <span style=${{ fontSize: '12px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .6 }}>${label}</span>
+        <button data-hover class="x-btn" onClick=${onBack}>✕ CLOSE</button>
+      </div>`;
+
+    const PageFooter = ({ fg }) => html`
+      <div style=${{ display: 'flex', justifyContent: 'space-between', padding: '24px',
+        fontSize: '11px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .55,
+        borderTop: '1px solid ' + (fg === '#000' ? 'rgba(0,0,0,.15)' : 'rgba(255,255,255,.2)'), marginTop: 'auto' }}>
+        <span>PRMPT (R) 2026</span>
+        <span>ALL PROMPTS RESERVED</span>
+      </div>`;
+
+    const Marquee = ({ text, dark }) => html`
+      <div style=${{ overflow: 'hidden', borderTop: '1px solid ' + (dark ? 'rgba(0,0,0,.2)' : 'rgba(255,255,255,.22)'),
+        borderBottom: '1px solid ' + (dark ? 'rgba(0,0,0,.2)' : 'rgba(255,255,255,.22)'), padding: '14px 0', margin: '6vh 0' }}>
+        <div class="marquee-track" style=${{ fontSize: 'clamp(18px, 2.4vw, 32px)', letterSpacing: '-.03em', textTransform: 'uppercase' }}>
+          ${[0, 1].map((k) => html`<span key=${k} style=${{ paddingRight: '2em' }}>${text} — ${text} —&nbsp;</span>`)}
+        </div>
+      </div>`;
+
+    /* ---------------- PAGES ---------------- */
+    function AboutPage({ onBack }) {
+      return html`<${Overlay} onClose=${onBack} bg="#000" fg="#fff">
+        ${(close) => html`
+          <${PageHeader} onBack=${close} label="02 — ABOUT" fg="#fff" />
+          <div style=${{ padding: '24px', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
+            <h1 class="page-enter" style=${{ fontSize: 'clamp(44px, 9vw, 150px)', lineHeight: .92, letterSpacing: '-.04em', textTransform: 'uppercase', margin: '8vh 0 6vh' }}>
+              WE DON'T DESIGN<br />CLOTHES.<br /><span style=${{ opacity: .45 }}>WE WRITE THEM.</span>
+            </h1>
+            <div style=${{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '40px', marginBottom: '10vh' }}>
+              <p class="page-enter" style=${{ animationDelay: '.1s', fontSize: '14px', lineHeight: '160%', letterSpacing: '-.02em', maxWidth: '46ch', margin: 0 }}>
+                PRMPT IS NOT A BRAND. IT IS AN INSTRUCTION. FOUNDED IN 2026, NOWHERE.
+                EVERY GARMENT IN THIS ARCHIVE BEGAN AS A SENTENCE FED TO A MACHINE —
+                ITERATED, REJECTED, REGENERATED, UNTIL THE OUTPUT FELT INEVITABLE.
+              </p>
+              <p class="page-enter" style=${{ animationDelay: '.2s', fontSize: '14px', lineHeight: '160%', letterSpacing: '-.02em', maxWidth: '46ch', margin: 0 }}>
+                NO SKETCHES. NO MOODBOARDS. NO SEASONS. TEN LOOKS PER DROP,
+                ONE THOUSAND ITERATIONS EACH. WHAT YOU SEE IS WHAT SURVIVED.
+                THE REST WAS DELETED — AS IT SHOULD BE.
+              </p>
+            </div>
+          </div>
+          <${Marquee} text="FASHION IS A PROMPT — TYPE IT — WEAR IT — DELETE IT — REGENERATE" />
+          <div style=${{ padding: '0 24px 10vh', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
+            <div class="stat-row">
+              <div><div style=${{ fontSize: 'clamp(28px,4vw,56px)', letterSpacing: '-.04em' }}>10</div><div style=${{ fontSize: '11px', textTransform: 'uppercase', opacity: .5, marginTop: '6px' }}>LOOKS PER DROP</div></div>
+              <div><div style=${{ fontSize: 'clamp(28px,4vw,56px)', letterSpacing: '-.04em' }}>0</div><div style=${{ fontSize: '11px', textTransform: 'uppercase', opacity: .5, marginTop: '6px' }}>HUMAN SKETCHES</div></div>
+            </div>
+            <div class="stat-row">
+              <div><div style=${{ fontSize: 'clamp(28px,4vw,56px)', letterSpacing: '-.04em' }}>1,024</div><div style=${{ fontSize: '11px', textTransform: 'uppercase', opacity: .5, marginTop: '6px' }}>ITERATIONS EACH</div></div>
+              <div><div style=${{ fontSize: 'clamp(28px,4vw,56px)', letterSpacing: '-.04em' }}>100%</div><div style=${{ fontSize: '11px', textTransform: 'uppercase', opacity: .5, marginTop: '6px' }}>SYNTHETIC</div></div>
+            </div>
+          </div>
+          <${PageFooter} fg="#fff" />
+        `}
+      </${Overlay}>`;
+    }
+
+    function LookModal({ product, onClose, addToCart }) {
+      const [size, setSize] = useState(null);
+      const [added, setAdded] = useState(false);
+      const add = () => {
+        if (!size) return;
+        addToCart({ id: product.id, size });
+        setAdded(true);
+        setTimeout(() => { setAdded(false); onClose(); }, 900);
+      };
+      return html`
+        <div style=${{ position: 'fixed', inset: 0, zIndex: 70, background: '#000', color: '#fff',
+          display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', overflowY: 'auto', overscrollBehavior: 'contain' }}>
+          <div style=${{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,.2)' }}>
+            <button data-hover class="x-btn" onClick=${onClose}>← BACK TO ARCHIVE</button>
+            <span style=${{ fontSize: '12px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .6 }}>LOOK ${String(product.id + 1).padStart(3, '0')}</span>
+            <button data-hover class="x-btn" onClick=${onClose}>✕ CLOSE</button>
+          </div>
+          <div style=${{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.3fr) minmax(0, 1fr)', minHeight: 'calc(100vh - 80px)' }} class="look-grid">
+            <div style=${{ backgroundImage: 'url(' + product.src + ')', backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '60vh' }}></div>
+            <div style=${{ padding: '40px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div class="page-enter">
+                <div style=${{ fontSize: '12px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .5, marginBottom: '8px' }}>ARCHIVE COLLECTION — SS26</div>
+                <h2 style=${{ fontSize: 'clamp(32px, 5vw, 64px)', lineHeight: .95, letterSpacing: '-.04em', textTransform: 'uppercase', margin: 0 }}>${product.name}</h2>
+              </div>
+              <div class="page-enter" style=${{ animationDelay: '.1s', fontSize: 'clamp(20px, 2.4vw, 32px)', letterSpacing: '-.03em' }}>${money(product.cents)}</div>
+              <p class="page-enter" style=${{ animationDelay: '.15s', fontSize: '14px', lineHeight: '160%', letterSpacing: '-.02em', maxWidth: '52ch', margin: 0, opacity: .85 }}>${product.description}</p>
+              <div class="page-enter" style=${{ animationDelay: '.2s' }}>
+                <div style=${{ fontSize: '11px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .5, marginBottom: '10px' }}>MATERIALS</div>
+                <div style=${{ fontSize: '13px', letterSpacing: '-.01em', lineHeight: '170%' }}>
+                  ${product.materials.map((m) => html`<div key=${m}>${m}</div>`)}
+                </div>
+              </div>
+              <div class="page-enter" style=${{ animationDelay: '.25s' }}>
+                <div style=${{ fontSize: '11px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .5, marginBottom: '10px' }}>SIZE</div>
+                <div style=${{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '6px' }}>
+                  ${SIZES.map((s) => html`
+                    <button data-hover key=${s} class="size-btn ${size === s ? 'active' : ''}" onClick=${() => setSize(s)}>${s}</button>`)}
+                </div>
+              </div>
+              <button data-hover class="pill page-enter" style=${{ animationDelay: '.3s', marginTop: 'auto',
+                background: added ? '#fff' : '#fff', color: '#000',
+                fontSize: 'clamp(16px, 2vw, 22px)', padding: '18px 24px', textTransform: 'uppercase',
+                opacity: !size && !added ? .4 : 1 }} onClick=${add} disabled=${!size && !added}>
+                ${added ? 'ADDED ✓' : size ? 'ADD TO CART — ' + money(product.cents) : 'SELECT A SIZE'}
+              </button>
+            </div>
+          </div>
+          <style>
+            @media (max-width: 899px) {
+              .look-grid { grid-template-columns: 1fr !important; }
+              .look-grid > div:first-child { min-height: 70vh !important; }
+            }
+          </style>
+        </div>`;
+    }
+
+    function ArchivePage({ onBack, addToCart, cart }) {
+      const bp = getBp();
+      const cols = bp === 'mobile' ? 2 : bp === 'tablet' ? 3 : 4;
+      const [selectedId, setSelectedId] = useState(null);
+      return html`<${Overlay} onClose=${onBack} bg="#000" fg="#fff">
+        ${(close) => html`
+          <${PageHeader} onBack=${close} label="03 — ARCHIVE / SS26" fg="#fff" />
+          <div style=${{ padding: '32px 24px 10vh', maxWidth: '1600px', width: '100%', margin: '0 auto' }}>
+            <div style=${{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '32px', flexWrap: 'wrap', gap: '12px' }}>
+              <h1 class="page-enter" style=${{ fontSize: 'clamp(32px, 6vw, 90px)', lineHeight: 1, letterSpacing: '-.04em', textTransform: 'uppercase', margin: 0 }}>ARCHIVE</h1>
+              <span style=${{ fontSize: '12px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .6 }}>
+                10 LOOKS — ${cart.length} IN CART
+              </span>
+            </div>
+            <div style=${{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(' + cols + ', minmax(0, 1fr))' }}>
+              ${PRODUCTS.map((p, i) => html`
+                <div key=${p.id} class="look-card page-enter" style=${{ animationDelay: (i * 0.05) + 's' }}>
+                  <button data-hover onClick=${() => setSelectedId(p.id)} style=${{ display: 'block', width: '100%', textAlign: 'left', padding: 0 }}>
+                    <div style=${{ aspectRatio: '2 / 3', overflow: 'hidden', background: '#111' }}>
+                      <div class="look-img" style=${{ width: '100%', height: '100%', backgroundImage: 'url("' + p.src + '")', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+                    </div>
+                  </button>
+                  <div style=${{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '10px', gap: '8px' }}>
+                    <div style=${{ fontSize: '12px', letterSpacing: '-.02em', textTransform: 'uppercase' }}>
+                      <div style=${{ opacity: .5, marginBottom: '2px' }}>LOOK ${String(p.id + 1).padStart(3, '0')}</div>
+                      <div>${p.name}</div>
+                    </div>
+                    <div style=${{ textAlign: 'right' }}>
+                      <div style=${{ fontSize: '12px', letterSpacing: '-.02em', marginBottom: '6px' }}>${money(p.cents)}</div>
+                      <button data-hover class="look-add pill" onClick=${() => setSelectedId(p.id)}
+                        style=${{ background: '#fff', color: '#000', fontSize: '11px', padding: '6px 14px', textTransform: 'uppercase' }}>
+                        VIEW →
+                      </button>
+                    </div>
+                  </div>
+                </div>`)}
+            </div>
+          </div>
+          <${PageFooter} fg="#fff" />
+          ${selectedId !== null && html`<${LookModal} product=${PRODUCTS[selectedId]} onClose=${() => setSelectedId(null)} addToCart=${addToCart} />`}
+        `}
+      </${Overlay}>`;
+    }
+
+    function JournalPage({ onBack }) {
+      return html`<${Overlay} onClose=${onBack} bg="#000" fg="#fff">
+        ${(close) => html`
+          <${PageHeader} onBack=${close} label="04 — JOURNAL" fg="#fff" />
+          <div style=${{ padding: '32px 24px 10vh', maxWidth: '1100px', width: '100%', margin: '0 auto' }}>
+            <h1 class="page-enter" style=${{ fontSize: 'clamp(32px, 6vw, 90px)', lineHeight: 1, letterSpacing: '-.04em', textTransform: 'uppercase', margin: '0 0 12px' }}>JOURNAL</h1>
+            <p class="page-enter" style=${{ animationDelay: '.05s', fontSize: '12px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .55, margin: '0 0 40px' }}>DISPATCHES FROM THE MACHINE — REVERSE CHRONOLOGICAL</p>
+            ${JOURNAL.map((e, i) => html`
+              <div key=${e.num} class="journal-entry page-enter" style=${{ animationDelay: (0.1 + i * 0.06) + 's' }}>
+                <div class="jnum">ENTRY ${e.num}</div>
+                <div>
+                  <div class="jdate">${e.date}</div>
+                  <div class="jtitle">${e.title}</div>
+                  <div class="jbody">${e.body}</div>
+                </div>
+              </div>`)}
+          </div>
+          <${Marquee} text="EVERY ENTRY IS THE LAST ENTRY — UNTIL THE NEXT ONE" />
+          <${PageFooter} fg="#fff" />
+        `}
+      </${Overlay}>`;
+    }
+
+    function CartPage({ onBack, onArchive, cart, removeItem, clearCart }) {
+      const [checkout, setCheckout] = useState('idle');
+      const total = cart.reduce((s, l) => s + PRODUCTS[l.id].cents, 0);
+      const doCheckout = () => {
+        if (checkout !== 'idle' || cart.length === 0) return;
+        setCheckout('processing');
+        setTimeout(() => setCheckout('accepted'), 1600);
+        setTimeout(() => { clearCart(); setCheckout('done'); }, 3200);
+        setTimeout(() => setCheckout('idle'), 5200);
+      };
+      const label = checkout === 'idle' ? (cart.length ? 'CHECKOUT — ' + money(total) : 'CHECKOUT')
+        : checkout === 'processing' ? 'PROCESSING PROMPT…'
+        : checkout === 'accepted' ? 'PROMPT ACCEPTED ✓'
+        : 'ORDER RENDERED';
+      return html`<${Overlay} onClose=${onBack} bg="#fff" fg="#000">
+        ${(close) => html`
+          <${PageHeader} onBack=${close} label="06 — CART" fg="#000" />
+          <div style=${{ padding: '32px 24px 10vh', maxWidth: '900px', width: '100%', margin: '0 auto' }}>
+            <h1 class="page-enter" style=${{ fontSize: 'clamp(32px, 6vw, 90px)', lineHeight: 1, letterSpacing: '-.04em', textTransform: 'uppercase', margin: '0 0 32px' }}>CART</h1>
+            ${cart.length === 0
+              ? html`
+                <div class="page-enter" style=${{ padding: '8vh 0', textAlign: 'center' }}>
+                  <div style=${{ fontSize: 'clamp(18px, 3vw, 28px)', letterSpacing: '-.03em', textTransform: 'uppercase', opacity: .55, marginBottom: '24px' }}>
+                    ${checkout === 'done' ? 'ORDER #SS26-' + String(Math.floor(Math.random() * 9999)).padStart(4, '0') + ' — RENDERED & SHIPPED' : 'NOTHING HERE YET. THE MACHINE AWAITS.'}
+                  </div>
+                  <button data-hover class="pill" onClick=${onArchive}
+                    style=${{ background: '#000', color: '#fff', fontSize: '16px', padding: '16px 40px', textTransform: 'uppercase' }}>
+                    OPEN ARCHIVE
+                  </button>
+                </div>`
+              : html`
+                <div>
+                  ${cart.map((l, i) => html`
+                    <div key=${i} class="cart-line page-enter" style=${{ animationDelay: (i * 0.05) + 's' }}>
+                      <div style=${{ aspectRatio: '2 / 3', backgroundImage: 'url("' + PRODUCTS[l.id].src + '")', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+                      <div style=${{ fontSize: '13px', letterSpacing: '-.02em', textTransform: 'uppercase' }}>
+                        <div style=${{ opacity: .5, marginBottom: '2px' }}>LOOK ${String(l.id + 1).padStart(3, '0')} — ${PRODUCTS[l.id].name}</div>
+                        <div style=${{ opacity: .7 }}>SIZE: ${l.size}</div>
+                      </div>
+                      <div style=${{ fontSize: '13px', letterSpacing: '-.02em' }}>${money(PRODUCTS[l.id].cents)}</div>
+                      <button data-hover class="x-btn" onClick=${() => removeItem(i)}>✕</button>
+                    </div>`)}
+                  <div style=${{ display: 'flex', justifyContent: 'space-between', padding: '24px 0', fontSize: '15px', letterSpacing: '-.02em', textTransform: 'uppercase' }}>
+                    <span>TOTAL</span><span>${money(total)}</span>
+                  </div>
+                </div>`}
+            ${cart.length > 0 && html`
+              <button data-hover class="pill" onClick=${doCheckout}
+                style=${{ background: '#000', color: '#fff', width: '100%', fontSize: 'clamp(18px, 3vw, 28px)', padding: '22px 40px', textTransform: 'uppercase', marginTop: '8px', opacity: checkout === 'processing' ? .6 : 1 }}>
+                ${label}
+              </button>`}
+            <div style=${{ fontSize: '11px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .4, textAlign: 'center', marginTop: '18px' }}>
+              ${cart.length > 0 ? 'FREE WORLDWIDE SHIPPING ON ALL ORDERS' : 'YOUR CART IS EMPTY — AND CLEAN'}
+            </div>
+          </div>
+          <${PageFooter} fg="#000" />
+        `}
+      </${Overlay}>`;
+    }
+
+    function ShippingPage({ onBack }) {
+      return html`<${Overlay} onClose=${onBack} bg="#000" fg="#fff">
+        ${(close) => html`
+          <${PageHeader} onBack=${close} label="07 — SHIPPING" fg="#fff" />
+          <div style=${{ padding: '32px 24px 10vh', maxWidth: '900px', width: '100%', margin: '0 auto' }}>
+            <h1 class="page-enter" style=${{ fontSize: 'clamp(32px, 6vw, 90px)', lineHeight: 1, letterSpacing: '-.04em', textTransform: 'uppercase', margin: '0 0 8px' }}>SHIPPING</h1>
+            <p class="page-enter" style=${{ animationDelay: '.05s', fontSize: '12px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .55, margin: '0 0 40px' }}>DELIVERY & RETURNS — READ IT. IT IS SHORT ON PURPOSE.</p>
+            ${SHIPPING_CLAUSES.map((c, i) => html`
+              <div key=${c[0]} class="clause page-enter" style=${{ animationDelay: (0.08 + i * 0.06) + 's' }}>
+                <span class="num">${c[0]}</span><span>${c[1]}</span>
+              </div>`)}
+          </div>
+          <${PageFooter} fg="#fff" />
+        `}
+      </${Overlay}>`;
+    }
+
+    function PrivacyPage({ onBack }) {
+      return html`<${Overlay} onClose=${onBack} bg="#000" fg="#fff">
+        ${(close) => html`
+          <${PageHeader} onBack=${close} label="08 — PRIVACY" fg="#fff" />
+          <div style=${{ padding: '32px 24px 10vh', maxWidth: '900px', width: '100%', margin: '0 auto' }}>
+            <h1 class="page-enter" style=${{ fontSize: 'clamp(32px, 6vw, 90px)', lineHeight: 1, letterSpacing: '-.04em', textTransform: 'uppercase', margin: '0 0 8px' }}>PRIVACY</h1>
+            <p class="page-enter" style=${{ animationDelay: '.05s', fontSize: '12px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .55, margin: '0 0 40px' }}>EFFECTIVE 2026.06.29 — READ IT. IT IS SHORT ON PURPOSE.</p>
+            ${PRIVACY_CLAUSES.map((c, i) => html`
+              <div key=${c[0]} class="clause page-enter" style=${{ animationDelay: (0.08 + i * 0.06) + 's' }}>
+                <span class="num">${c[0]}</span><span>${c[1]}</span>
+              </div>`)}
+          </div>
+          <${PageFooter} fg="#fff" />
+        `}
+      </${Overlay}>`;
+    }
+
+    function ContactPage({ onBack }) {
+      const [sent, setSent] = useState(false);
+      const [name, setName] = useState('');
+      const [email, setEmail] = useState('');
+      const [msg, setMsg] = useState('');
+      const submit = (e) => {
+        e.preventDefault();
+        if (sent) return;
+        setSent(true);
+        setTimeout(() => { setSent(false); setName(''); setEmail(''); setMsg(''); }, 3000);
+      };
+      return html`<${Overlay} onClose=${onBack} bg="#000" fg="#fff">
+        ${(close) => html`
+          <${PageHeader} onBack=${close} label="09 — CONTACT" fg="#fff" />
+          <div style=${{ padding: '32px 24px 10vh', maxWidth: '1100px', width: '100%', margin: '0 auto' }}>
+            <h1 class="page-enter" style=${{ fontSize: 'clamp(32px, 6vw, 90px)', lineHeight: 1, letterSpacing: '-.04em', textTransform: 'uppercase', margin: '0 0 40px' }}>CONTACT</h1>
+            <div style=${{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '40px', marginBottom: '6vh' }}>
+              <div class="page-enter" style=${{ animationDelay: '.05s' }}>
+                <div style=${{ fontSize: '11px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .5, marginBottom: '8px' }}>STUDIO</div>
+                <div style=${{ fontSize: '14px', lineHeight: '160%', letterSpacing: '-.02em' }}>
+                  ROOM 0, FLOOR −1<br />
+                  31 RUE DU NÉANT<br />
+                  75000 PARIS, NOWHERE<br />
+                  BY APPOINTMENT ONLY
+                </div>
+              </div>
+              <div class="page-enter" style=${{ animationDelay: '.1s' }}>
+                <div style=${{ fontSize: '11px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .5, marginBottom: '8px' }}>DIRECT</div>
+                <div style=${{ fontSize: '14px', lineHeight: '160%', letterSpacing: '-.02em' }}>
+                  <a data-hover class="link-u" href="mailto:prompt@prmpt.studio">PROMPT@PRMPT.STUDIO</a><br />
+                  <a data-hover class="link-u" href="mailto:press@prmpt.studio">PRESS@PRMPT.STUDIO</a><br />
+                  +33 (0) 0 00 00 00
+                </div>
+              </div>
+              <div class="page-enter" style=${{ animationDelay: '.15s' }}>
+                <div style=${{ fontSize: '11px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .5, marginBottom: '8px' }}>HOURS</div>
+                <div style=${{ fontSize: '14px', lineHeight: '160%', letterSpacing: '-.02em' }}>
+                  THE MACHINE DOES NOT SLEEP<br />
+                  WE DO — OCCASIONALLY<br />
+                  EXPECT A REPLY WITHIN 72H
+                </div>
+              </div>
+            </div>
+            <form onSubmit=${submit} style=${{ maxWidth: '700px' }}>
+              <div style=${{ fontSize: '11px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .5, marginBottom: '8px' }}>SEND A MESSAGE</div>
+              <input data-hover class="contact-field page-enter" style=${{ animationDelay: '.2s' }} placeholder="YOUR NAME" value=${name} onInput=${(e) => setName(e.target.value)} required />
+              <input data-hover class="contact-field page-enter" style=${{ animationDelay: '.25s' }} placeholder="YOUR EMAIL" type="email" value=${email} onInput=${(e) => setEmail(e.target.value)} required />
+              <textarea data-hover class="contact-field page-enter" style=${{ animationDelay: '.3s' }} placeholder="YOUR MESSAGE" value=${msg} onInput=${(e) => setMsg(e.target.value)} required />
+              <button data-hover type="submit" class="pill page-enter" style=${{ animationDelay: '.35s', marginTop: '24px',
+                background: '#fff', color: '#000', fontSize: '16px', padding: '16px 40px', textTransform: 'uppercase', opacity: sent ? .7 : 1 }}>
+                ${sent ? 'DELIVERED ✓' : 'SEND →'}
+              </button>
+            </form>
+          </div>
+          <${PageFooter} fg="#fff" />
+        `}
+      </${Overlay}>`;
+    }
+
+    /* ---------------- MENU ---------------- */
+    function MenuOverlay({ onNav, onClose }) {
+      const items = [
+        ['01', 'INDEX', 'SCROLL EXPERIENCE', 'home'],
+        ['02', 'ABOUT', 'MANIFESTO', 'about'],
+        ['03', 'ARCHIVE', 'SS26 — 10 LOOKS', 'archive'],
+        ['04', 'JOURNAL', 'DISPATCHES', 'journal'],
+        ['05', 'CART', 'YOUR SELECTION', 'cart'],
+        ['06', 'SHIPPING', 'DELIVERY & RETURNS', 'shipping'],
+        ['07', 'PRIVACY', 'THE LEGAL PART', 'privacy'],
+        ['08', 'CONTACT', 'SAY HELLO', 'contact'],
+      ];
+      return html`<${Overlay} onClose=${onClose} bg="#000" fg="#fff">
+        ${(close) => html`
+          <div style=${{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px' }}>
+            <span style=${{ fontSize: '12px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .6 }}>PRMPT — MENU</span>
+            <button data-hover class="x-btn" onClick=${close}>✕ CLOSE</button>
+          </div>
+          <div style=${{ padding: '2vh 24px 4vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
+            ${items.map((it, i) => html`
+              <button key=${it[0]} data-hover class="menu-row page-enter" style=${{ animationDelay: (i * 0.06) + 's' }} onClick=${() => onNav(it[3])}>
+                <span class="idx">${it[0]}</span>
+                <span class="ttl">${it[1]}</span>
+                <span class="dsc">${it[2]}</span>
+              </button>`)}
+          </div>
+          <div style=${{ display: 'flex', justifyContent: 'space-between', padding: '20px 24px', fontSize: '11px', letterSpacing: '-.02em', textTransform: 'uppercase', opacity: .5, borderTop: '1px solid rgba(255,255,255,.2)' }}>
+            <span>PRMPT (R) 2026</span>
+            <span>SS26 — SYNTHETIC ARCHIVE</span>
+          </div>
+        `}
+      </${Overlay}>`;
+    }
+
+    /* ---------------- APP ---------------- */
+    function App() {
+      const bp = useBreakpoint();
+      const isTouch = useIsTouch();
+      const isDesktop = bp === 'desktop' && !isTouch;
+      const cols = bp === 'mobile' ? 2 : bp === 'tablet' ? 3 : 4;
+
+      const [view, setView] = useState(() => hashToView(location.hash));
+      const [menuOpen, setMenuOpen] = useState(false);
+      const [cart, setCart] = useState([]);
+
+      const spacerRef = useRef(null); const panelRef = useRef(null); const innerRef = useRef(null);
+      const leftVidRef = useRef(null); const rightVidRef = useRef(null);
+      const infoRef = useRef(null); const buyRef = useRef(null);
+      const overlayRef = useRef(null); const footerRef = useRef(null);
+      const cursorRef = useRef(null); const cursorInnerRef = useRef(null); const symbolRef = useRef(null);
+      const cardsRef = useRef([]);
+      const mouseXRef = useRef(window.innerWidth / 2);
+      const videosLoadedRef = useRef({ left: false, right: false });
+      const lastSymbolRef = useRef(0);
+
+      const layout = buildLayout(GALLERY_IMAGES.length, cols);
+
+      /* routing */
+      const navigate = useCallback((v) => {
+        setMenuOpen(false);
+        location.hash = v === 'home' ? '/' : '/' + v;
+        setView(v);
+        window.scrollTo(0, 0);
+      }, []);
+      useEffect(() => {
+        const onHash = () => setView(hashToView(location.hash));
+        window.addEventListener('hashchange', onHash);
+        return () => window.removeEventListener('hashchange', onHash);
+      }, []);
+      useEffect(() => { document.title = TITLES[view] || TITLES.home; }, [view]);
+
+      useEffect(() => { document.documentElement.style.overflow = (view !== 'home' || menuOpen) ? 'hidden' : ''; }, [view, menuOpen]);
+      useEffect(() => {
+        const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+      }, []);
+
+      /* cart — cart items now are { id, size } */
+      const addToCart = useCallback((item) => setCart((c) => [...c, typeof item === 'number' ? { id: item, size: 'M' } : item]), []);
+      const removeItem = useCallback((i) => setCart((c) => c.filter((_, j) => j !== i)), []);
+      const clearCart = useCallback(() => setCart([]), []);
+
+      /* cursor */
+      useEffect(() => {
+        if (!isDesktop) return;
+        const onMove = (e) => {
+          mouseXRef.current = e.clientX;
+          if (cursorRef.current) { cursorRef.current.style.left = e.clientX + 'px'; cursorRef.current.style.top = e.clientY + 'px'; }
+        };
+        const over = (e) => { if (e.target.closest && e.target.closest('[data-hover]')) cursorInnerRef.current && cursorInnerRef.current.classList.add('big'); };
+        const out = (e) => { if (e.target.closest && e.target.closest('[data-hover]')) cursorInnerRef.current && cursorInnerRef.current.classList.remove('big'); };
+        const down = () => { cursorInnerRef.current && cursorInnerRef.current.classList.add('click'); };
+        const up = () => { cursorInnerRef.current && cursorInnerRef.current.classList.remove('click'); };
+        window.addEventListener('mousemove', onMove, { passive: true });
+        document.addEventListener('mouseover', over);
+        document.addEventListener('mouseout', out);
+        document.addEventListener('mousedown', down);
+        document.addEventListener('mouseup', up);
+        document.body.classList.add('cursor-hidden');
+        return () => {
+          window.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseover', over);
+          document.removeEventListener('mouseout', out);
+          document.removeEventListener('mousedown', down);
+          document.removeEventListener('mouseup', up);
+          document.body.classList.remove('cursor-hidden');
+        };
+      }, [isDesktop]);
+
+      const onVideoLoaded = useCallback((side) => {
+        videosLoadedRef.current[side] = true;
+        if (videosLoadedRef.current.left && videosLoadedRef.current.right) {
+          const c = document.getElementById('main-canvas');
+          if (c) c.style.opacity = '1';
+        }
+      }, []);
+
+      useEffect(() => {
+        const t = setTimeout(() => { const c = document.getElementById('main-canvas'); if (c) c.style.opacity = '1'; }, 3000);
+        return () => clearTimeout(t);
+      }, []);
+
+      /* desktop scrubbing */
+      useEffect(() => {
+        if (!isDesktop) return;
+        let raf = 0;
+        const tick = () => {
+          const lv = leftVidRef.current, rv = rightVidRef.current;
+          const w = window.innerWidth, cx = w / 2, dz = Math.max(30, w * 0.05), x = mouseXRef.current;
+          if (x < cx - dz) {
+            if (lv) lv.style.visibility = 'hidden';
+            if (rv) { rv.style.visibility = 'visible';
+              const p = Math.min(1, Math.max(0, ((cx - dz) - x) / (cx - dz)));
+              const t = p * (rv.duration || 0);
+              if (!rv.seeking && Math.abs(rv.currentTime - t) > 0.02) rv.currentTime = t; }
+          } else if (x > cx + dz) {
+            if (rv) rv.style.visibility = 'hidden';
+            if (lv) { lv.style.visibility = 'visible';
+              const s = cx + dz, p = Math.min(1, Math.max(0, (x - s) / (w - s)));
+              const t = p * (lv.duration || 0);
+              if (!lv.seeking && Math.abs(lv.currentTime - t) > 0.02) lv.currentTime = t; }
+          } else {
+            if (lv && !lv.seeking && lv.currentTime !== 0) lv.currentTime = 0;
+            if (rv && !rv.seeking && rv.currentTime !== 0) rv.currentTime = 0;
+          }
+          raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+      }, [isDesktop]);
+
+      /* mobile autoplay */
+      useEffect(() => {
+        if (isDesktop) return;
+        const lv = leftVidRef.current, rv = rightVidRef.current;
+        if (!lv || !rv) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const show = (side) => {
+          if (side === 'left') { lv.style.display = 'block'; rv.style.display = 'none'; lv.currentTime = 0; lv.play().catch(() => {}); }
+          else { rv.style.display = 'block'; lv.style.display = 'none'; rv.currentTime = 0; rv.play().catch(() => {}); }
+        };
+        const onLE = () => show('right'), onRE = () => show('left');
+        lv.addEventListener('ended', onLE); rv.addEventListener('ended', onRE);
+        show('left');
+        return () => { lv.removeEventListener('ended', onLE); rv.removeEventListener('ended', onRE); lv.pause(); rv.pause(); };
+      }, [isDesktop]);
+
+      useEffect(() => {
+        const onScroll = () => {
+          const now = performance.now();
+          if (now - lastSymbolRef.current < 80) return;
+          lastSymbolRef.current = now;
+          if (symbolRef.current) symbolRef.current.textContent = CIRCLE_SYMBOLS[Math.floor(Math.random() * CIRCLE_SYMBOLS.length)];
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+      }, []);
+
+      const updateSpacer = useCallback(() => {
+        const vh = window.innerHeight, inner = innerRef.current, spacer = spacerRef.current;
+        if (!inner || !spacer) return;
+        const maxScroll = Math.max(0, inner.scrollHeight - vh);
+        spacer.style.height = (vh + maxScroll + 2 * vh) + 'px';
+      }, []);
+      useLayoutEffect(() => {
+        updateSpacer(); requestAnimationFrame(updateSpacer);
+        window.addEventListener('resize', updateSpacer);
+        window.addEventListener('load', updateSpacer);
+        return () => { window.removeEventListener('resize', updateSpacer); window.removeEventListener('load', updateSpacer); };
+      }, [updateSpacer, cols]);
+
+      useEffect(() => {
+        let raf = 0;
+        const update = () => {
+          const scrollY = window.scrollY, vh = window.innerHeight;
+          const inner = innerRef.current;
+          const maxScroll = inner ? Math.max(0, inner.scrollHeight - vh) : 0;
+          if (panelRef.current) {
+            const p1 = Math.min(1, Math.max(0, scrollY / vh));
+            panelRef.current.style.transform = 'translateY(' + (vh * (1 - p1)) + 'px)';
+          }
+          if (inner) {
+            const p2 = scrollY > vh ? Math.min(maxScroll, scrollY - vh) : 0;
+            inner.style.transform = 'translateY(' + (-p2) + 'px)';
+          }
+          const canvas = document.getElementById('main-canvas');
+          if (canvas) canvas.style.visibility = scrollY > vh ? 'hidden' : 'visible';
+          for (let i = 0; i < cardsRef.current.length; i++) {
+            const card = cardsRef.current[i];
+            if (!card) continue;
+            const r = card.getBoundingClientRect();
+            if (r.bottom <= 0 || r.top >= vh) { card.style.transform = 'scale(0)'; continue; }
+            const enter = Math.min(1, (vh - r.top) / (vh * 0.6));
+            const exit = Math.min(1, r.bottom / (vh * 0.4));
+            card.style.transform = 'scale(' + Math.max(0, Math.min(enter, exit)) + ')';
+          }
+          const outroStart = vh + maxScroll, outroDur = Math.max(100, vh - 100);
+          if (scrollY > outroStart) {
+            const p = Math.min(1, (scrollY - outroStart) / outroDur);
+            const off = isDesktop ? 166 : 132;
+            if (overlayRef.current) overlayRef.current.style.opacity = String(p);
+            if (infoRef.current) { infoRef.current.style.transform = 'translateY(' + (-off * p) + 'px)'; infoRef.current.style.opacity = String(1 - p); }
+            if (buyRef.current) buyRef.current.style.transform = 'scale(' + p + ')';
+            if (footerRef.current) footerRef.current.style.opacity = String(p);
+          } else {
+            if (overlayRef.current) overlayRef.current.style.opacity = '0';
+            if (infoRef.current) { infoRef.current.style.transform = 'translateY(0)'; infoRef.current.style.opacity = '1'; }
+            if (buyRef.current) buyRef.current.style.transform = 'scale(0)';
+            if (footerRef.current) footerRef.current.style.opacity = '0';
+          }
+          raf = requestAnimationFrame(update);
+        };
+        raf = requestAnimationFrame(update);
+        return () => cancelAnimationFrame(raf);
+      }, [isDesktop]);
+
+      const logoWidth = bp === 'mobile' ? 124 : bp === 'tablet' ? 266 : 355;
+      const logoPos = bp === 'mobile' ? { top: 16, left: 16 } : { top: 32, left: 32 };
+      const capLeft = bp === 'mobile' ? 16 : 32;
+      const capTop = bp === 'mobile' ? 118 : bp === 'tablet' ? 180 : 244;
+      const capWidth = bp === 'mobile' ? 'calc(100vw - 32px)' : bp === 'tablet' ? 'calc(50vw - 48px)' : '692px';
+      const navPos = bp === 'mobile' ? { top: 16, right: 16 } : { top: 32, right: 32 };
+      const homeUI = view === 'home' && !menuOpen;
+
+      return html`
+        <div id="scroll-spacer" ref=${spacerRef}
+          style=${{ position: 'relative', userSelect: 'none', background: 'white', height: '500vh' }}>
+
+          ${isDesktop && html`
+            <div ref=${cursorRef} style=${{ position: 'fixed', pointerEvents: 'none', zIndex: 100,
+              left: '50%', top: '50%', transform: 'translate(-50%, -50%)', mixBlendMode: 'exclusion', willChange: 'left, top' }}>
+              <span ref=${cursorInnerRef} class="cursor-inner"><${CursorGlyph} /></span>
+            </div>`}
+
+          ${homeUI && html`
+            <div class="enter-slide" style=${{ position: 'fixed', pointerEvents: 'none', zIndex: 20,
+              top: logoPos.top + 'px', left: logoPos.left + 'px', width: logoWidth + 'px',
+              mixBlendMode: 'exclusion', color: '#fff', animationDelay: '0s' }}>
+              <${LogoSvg} />
+            </div>
+
+            <p class="enter-slide" style=${{ position: 'fixed', pointerEvents: 'none', zIndex: 20, margin: 0,
+              left: capLeft + 'px', top: capTop + 'px', width: capWidth, mixBlendMode: 'exclusion',
+              fontSize: '12px', lineHeight: '140%', letterSpacing: '-.04em', color: '#fff', animationDelay: '.3s' }}>
+              When switching between videos near the center, do not reset currentTime to 0 abruptly. Add a small dead zone: if cursor is within +/-50px of center, keep both videos at currentTime = 0 and show whichever was last active.
+            </p>
+
+            <div class="enter-slide" style=${{ position: 'fixed', zIndex: 20, pointerEvents: 'none',
+              top: navPos.top + 'px', right: navPos.right + 'px', width: isDesktop ? '330px' : 'auto', height: '30px',
+              mixBlendMode: 'exclusion', animationDelay: '.15s' }}>
+              <div style=${{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
+                ${isDesktop && html`
+                  <button data-hover class="link-u" onClick=${() => navigate('about')}
+                    style=${{ textTransform: 'uppercase', color: '#fff', fontSize: '15px', letterSpacing: '-.02em', pointerEvents: 'auto' }}>ABOUT</button>`}
+                <div style=${{ display: 'flex', alignItems: 'center', gap: isDesktop ? '50px' : '20px' }}>
+                  <button data-hover onClick=${() => setMenuOpen(true)} style=${{ pointerEvents: 'auto', display: 'block', lineHeight: 0 }}>
+                    <${HamburgerIcon} size=${isDesktop ? 30 : 24} />
+                  </button>
+                  <button data-hover onClick=${() => navigate('cart')} class="link-u"
+                    style=${{ color: '#fff', fontSize: isDesktop ? '15px' : '13px', letterSpacing: '-.02em', pointerEvents: 'auto', textTransform: 'uppercase' }}>
+                    [ CART${cart.length > 0 ? ' — ' + cart.length : ''} ]
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div id="outro-info" ref=${infoRef} class="enter-fade" data-outro-offset=${isDesktop ? 166 : 132}
+              style=${{ position: 'fixed', pointerEvents: 'none', zIndex: 20, mixBlendMode: 'exclusion',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', animationDelay: '.45s',
+                ...(isDesktop ? { right: '32px', bottom: '80px', width: '330px' } : { left: 0, right: 0, bottom: '48px' }) }}>
+              <div style=${{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: isDesktop ? '100%' : '252px', marginBottom: isDesktop ? '32px' : '12px' }}>
+                <div style=${{ position: 'relative', width: isDesktop ? '30px' : '20px', height: isDesktop ? '30px' : '20px', marginBottom: '16px' }}>
+                  <${CircleIcon} size=${isDesktop ? 30 : 20} sw=${isDesktop ? 2.5 : 2} />
+                  <span ref=${symbolRef} style=${{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    textTransform: 'uppercase', color: '#fff', fontSize: isDesktop ? '15px' : '10px', letterSpacing: '-.04em' }}>8</span>
+                </div>
+                <div style=${{ textTransform: 'uppercase', color: '#fff', textAlign: 'center', width: '100%',
+                  fontSize: isDesktop ? '30px' : '20px', lineHeight: '100%', letterSpacing: '-.04em' }}>ARCHIVE COLLECTION<br />"PROMPT"</div>
+              </div>
+              <div style=${{ color: '#fff', textAlign: 'center', fontSize: isDesktop ? '80px' : '60px', lineHeight: '100%', letterSpacing: '-.04em' }}>$97,33</div>
+            </div>
+
+            <div id="outro-buy" ref=${buyRef} style=${{ position: 'fixed', zIndex: 20, pointerEvents: 'none',
+              mixBlendMode: 'exclusion', transformOrigin: 'right bottom', transform: 'scale(0)',
+              background: '#fff', borderRadius: '1335px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              ...(isDesktop ? { right: '32px', bottom: '32px', width: '330px', height: '174px' } : { left: '16px', right: '16px', bottom: '60px', height: '100px' }) }}>
+              <span style=${{ fontSize: isDesktop ? '110px' : '72px', letterSpacing: '-.04em', color: '#fff', mixBlendMode: 'exclusion' }}>view</span>
+            </div>
+
+            <div id="outro-overlay" ref=${overlayRef} style=${{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 12, background: '#fff', opacity: 0 }}></div>
+          `}
+
+          <div id="main-canvas" style=${{ position: 'fixed', overflow: 'hidden', pointerEvents: 'none', zIndex: 0,
+            opacity: 0, transition: 'opacity .3s ease',
+            ...(isDesktop ? { inset: 0, width: '100%', height: '100%' } : { left: 0, top: '220px', width: '100vw', height: 'calc(100vh - 220px)' }) }}>
+            <video ref=${leftVidRef} src=${LEFT_VIDEO} muted playsInline preload="auto" onLoadedData=${() => onVideoLoaded('left')}
+              style=${{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', visibility: isDesktop ? 'hidden' : 'visible' }} />
+            <video ref=${rightVidRef} src=${RIGHT_VIDEO} muted playsInline preload="auto" onLoadedData=${() => onVideoLoaded('right')}
+              style=${{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', visibility: 'visible' }} />
+          </div>
+
+          <div ref=${panelRef} style=${{ position: 'fixed', inset: 0, zIndex: 10, background: '#000', transform: 'translateY(100vh)', willChange: 'transform' }}>
+            <div ref=${innerRef} style=${{ width: '100%', paddingTop: 'min(400px, 40vh)', willChange: 'transform' }}>
+              <div style=${{ display: 'grid', gap: '16px', padding: '0 16px', paddingBottom: '100vh', gridTemplateColumns: 'repeat(' + cols + ', minmax(0, 1fr))' }}>
+                ${layout.flat().map((imgIdx, fi) => {
+                  if (imgIdx === -1) return html`<div key=${'s' + fi} style=${{ aspectRatio: '2 / 3' }}></div>`;
+                  const left = (fi % cols) < cols / 2;
+                  return html`<div key=${'c' + imgIdx} class="bp-card" ref=${(el) => { cardsRef.current[imgIdx] = el; }}
+                    style=${{ aspectRatio: '2 / 3', transform: 'scale(0)', transformOrigin: left ? 'right bottom' : 'left bottom',
+                      backgroundImage: 'url("' + GALLERY_IMAGES[imgIdx] + '")', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>`;
+                })}
+              </div>
+              <div style=${{ display: 'flex', justifyContent: 'center', paddingBottom: '60px', gap: '12px', flexWrap: 'wrap' }}>
+                <button data-hover class="pill" onClick=${() => navigate('archive')}
+                  style=${{ pointerEvents: 'auto', background: '#fff', color: '#000', fontSize: '14px', padding: '14px 36px', textTransform: 'uppercase' }}>
+                  FULL ARCHIVE →
+                </button>
+                <button data-hover class="pill" onClick=${() => navigate('journal')}
+                  style=${{ pointerEvents: 'auto', background: 'transparent', color: '#fff', fontSize: '14px', padding: '14px 36px', textTransform: 'uppercase', border: '1px solid rgba(255,255,255,.3)' }}>
+                  READ THE JOURNAL
+                </button>
+              </div>
+            </div>
+          </div>
+
+          ${homeUI && html`
+            <div id="outro-footer" ref=${footerRef} style=${{ position: 'fixed', pointerEvents: 'none', zIndex: 30,
+              left: '16px', right: '16px', bottom: isDesktop ? '32px' : '24px', mixBlendMode: 'exclusion', opacity: 0,
+              display: 'flex', gap: isDesktop ? '80px' : '0', justifyContent: isDesktop ? 'flex-start' : 'space-between',
+              fontSize: isDesktop ? '13px' : '11px', letterSpacing: '-.02em', textTransform: 'uppercase', color: '#fff' }}>
+              <span>PRMPT (R) 2026</span>
+              <button data-hover onClick=${() => navigate('privacy')} style=${{ pointerEvents: 'auto', color: '#fff', textTransform: 'uppercase', fontSize: 'inherit', letterSpacing: 'inherit' }}>PRIVACY POLICY</button>
+            </div>`}
+
+          ${menuOpen && html`<${MenuOverlay} onNav=${navigate} onClose=${() => setMenuOpen(false)} />`}
+          ${view === 'about' && html`<${AboutPage} onBack=${() => navigate('home')} />`}
+          ${view === 'archive' && html`<${ArchivePage} onBack=${() => navigate('home')} addToCart=${addToCart} cart=${cart} />`}
+          ${view === 'journal' && html`<${JournalPage} onBack=${() => navigate('home')} />`}
+          ${view === 'cart' && html`<${CartPage} onBack=${() => navigate('home')} onArchive=${() => navigate('archive')} cart=${cart} removeItem=${removeItem} clearCart=${clearCart} />`}
+          ${view === 'shipping' && html`<${ShippingPage} onBack=${() => navigate('home')} />`}
+          ${view === 'privacy' && html`<${PrivacyPage} onBack=${() => navigate('home')} />`}
+          ${view === 'contact' && html`<${ContactPage} onBack=${() => navigate('home')} />`}
+        </div>`;
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(html`<${App} />`);
+  </script>
+</body>
+</html>
