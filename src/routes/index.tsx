@@ -95,7 +95,19 @@ function KazeMark() {
 function ProjectCard({ project, language, label, onOpen }: { project: Project; language: Language; label: string; onOpen: (project: Project) => void }) {
   return (
     <article className="project-card">
-      <button className="project-trigger" onClick={() => onOpen(project)} aria-label={`View ${project.title}`}>
+      <div
+        className="project-trigger"
+        role="button"
+        tabIndex={0}
+        onClick={() => onOpen(project)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onOpen(project);
+          }
+        }}
+        aria-label={`View ${project.title}`}
+      >
         <span className="project-thumb">
           <iframe src={project.file} title={`${project.title} preview`} loading="lazy" tabIndex={-1} aria-hidden="true" />
           {project.featured && <span className="featured-badge">{label}</span>}
@@ -104,7 +116,7 @@ function ProjectCard({ project, language, label, onOpen }: { project: Project; l
             <span className="round-arrow"><ArrowUpRight size={16} /></span>
           </span>
         </span>
-      </button>
+      </div>
       <div className="project-meta">
         <h3>{project.title}</h3>
         <span>{project.category[language]}</span>

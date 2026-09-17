@@ -209,7 +209,8 @@ button { cursor: pointer; }
 .project-count b { color: var(--studio-light); }
 .project-grid { display: grid; grid-template-columns: 1fr; gap: 40px 24px; padding: 34px 18px 84px; }
 .project-card { min-width: 0; }
-.project-trigger { display: block; width: 100%; border: 0; background: transparent; padding: 0; color: inherit; text-align: start; }
+.project-trigger { display: block; width: 100%; border: 0; outline: none; background: transparent; padding: 0; color: inherit; cursor: pointer; text-align: start; }
+.project-trigger:focus-visible .project-thumb { box-shadow: 0 0 0 2px var(--studio-light); }
 .project-thumb { position: relative; display: block; overflow: hidden; aspect-ratio: 4/3; border: 1px solid var(--studio-line); border-radius: 8px; background: var(--studio); }
 .project-thumb iframe { position: absolute; top: 0; left: 0; width: 400%; height: 400%; border: 0; pointer-events: none; transform: scale(.25); transform-origin: 0 0; background: var(--studio); }
 .featured-badge { position: absolute; z-index: 2; top: 13px; inset-inline-start: 13px; border: 1px solid color-mix(in oklch,var(--studio-light) 25%,transparent); border-radius: 999px; background: color-mix(in oklch,var(--studio-deep) 68%,transparent); padding: 6px 11px; color: var(--studio-light); font-family: var(--font-mono); font-size: 9px; letter-spacing: .14em; backdrop-filter: blur(8px); }
