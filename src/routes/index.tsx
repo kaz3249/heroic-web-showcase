@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { projects, type Project } from "../lib/projects";
-import kazeLogoAsset from "../assets/kaze-icon.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -82,7 +81,7 @@ const copy = {
 
 function KazeMark() {
   return (
-    <img className="kaze-logo" src={kazeLogoAsset.url} alt="Kaze Studio" />
+    <img className="kaze-logo" src="/favicon.png" alt="Kaze Studio" />
   );
 }
 
