@@ -164,9 +164,7 @@ button { cursor: pointer; }
 .booking-strip { display: flex; min-height: 39px; align-items: center; justify-content: center; gap: 8px; border-bottom: 1px solid var(--studio-line); color: var(--studio-copy); font-size: 12px; }
 .booking-strip span { color: var(--studio-warm); }
 .site-nav { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 14px; padding: 16px 20px; }
-.kaze-logo { display: inline-flex; align-items: center; gap: 10px; color: var(--studio-light); font-size: 13px; font-weight: 800; }
-.kaze-logo svg { width: 42px; height: 21px; flex: none; }
-.kaze-logo path { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.kaze-logo { display: block; width: 112px; height: 48px; flex: none; object-fit: contain; }
 .nav-pill { display: none; align-items: center; gap: 2px; border: 1px solid var(--studio-line); border-radius: 999px; background: var(--studio); padding: 4px; }
 .nav-pill a { border-radius: 999px; padding: 8px 13px; color: var(--studio-copy); font-size: 13px; }
 .nav-pill a:hover { color: var(--studio-light); }
@@ -233,7 +231,7 @@ button { cursor: pointer; }
 .project-viewer { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; background: var(--studio-deep); }
 .viewer-bar { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 10px; min-height: max(58px,env(safe-area-inset-top)); border-bottom: 1px solid var(--studio-line); padding: max(9px,env(safe-area-inset-top)) 10px 9px; background: var(--studio-panel); }
 .viewer-title { display: flex; min-width: 0; align-items: center; gap: 12px; }
-.viewer-title .kaze-logo span { display: none; }
+.viewer-title .kaze-logo { width: 72px; height: 32px; }
 .viewer-title > span { overflow: hidden; color: var(--studio-copy); font-family: var(--font-mono); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
 .viewer-actions { display: flex; flex: none; gap: 7px; }
 .viewer-link, .viewer-close { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--studio-line); border-radius: 999px; background: var(--studio); padding: 9px 11px; color: var(--studio-light); font-family: var(--font-mono); font-size: 9px; }
