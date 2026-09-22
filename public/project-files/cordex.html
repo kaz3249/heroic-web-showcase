@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>cordex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://d2ol7oe51mr4n9.cloudfront.net" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink: #f7f7f8;
+  --glass: rgba(36, 36, 38, 0.42);
+  --glass-2: rgba(28, 28, 30, 0.48);
+  --red: #e23b32;
+  --vh: 100vh;
+  --pad: clamp(14px, 4vw, 36px);
+  --nav-top: max(14px, env(safe-area-inset-top, 0px));
+  --safe-bottom: max(14px, env(safe-area-inset-bottom, 0px));
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow-x: clip; }
+body { background: #0a0a0b; color: var(--ink); font-family: Inter, Helvetica Neue, Arial, sans-serif; overflow-x: clip; }
+button, a { font-family: inherit; color: inherit; }
+
+.boot { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 16px; background: #0a0a0b;
+        transition: opacity 0.7s ease, visibility 0.7s; }
+.boot.done { opacity: 0; visibility: hidden; }
+.boot p { font-size: 12.5px; letter-spacing: 0.05em; color: rgba(255, 255, 255, 0.42); }
+.bar { width: 150px; height: 1px; background: rgba(255, 255, 255, 0.16); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 100%; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; }
+
+.nav-wrap { position: fixed; top: var(--nav-top); left: 0; right: 0; z-index: 80; display: flex; justify-content: center;
+  padding: 0 max(14px, env(safe-area-inset-left, 0px)) 0 max(14px, env(safe-area-inset-right, 0px)); pointer-events: none; }
+.nav { pointer-events: auto; display: flex; align-items: center; gap: 18px; max-width: min(100%, 520px);
+  padding: 6px 8px 6px 16px; border-radius: 999px; background: rgba(48,48,50,.55);
+  border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 10px 40px rgba(0,0,0,.18); }
+.logo { display: flex; align-items: center; gap: 8px; text-decoration: none; padding-right: 8px; }
+.logo svg { display: block; }
+.logo span { font-size: 18px; font-weight: 500; letter-spacing: -0.03em; }
+.seg { display: flex; align-items: center; background: rgba(255,255,255,.06); border-radius: 999px; padding: 3px; }
+.seg button { border: 0; background: transparent; color: rgba(255,255,255,.55); font-size: 13px; font-weight: 500;
+  padding: 8px 16px; min-height: 44px; border-radius: 999px; cursor: pointer;
+  transition: background .25s ease, color .25s ease; -webkit-tap-highlight-color: transparent; }
+.seg button.is-on { background: rgba(22,22,24,.92); color: #fff; }
+
+.stage { position: fixed; top: 0; left: 0; width: 100%; height: var(--vh); z-index: 1; overflow: hidden; }
+.layer { position: absolute; inset: 0; opacity: 0; will-change: opacity; }
+
+.hero { background: #0a0a0b; isolation: isolate; }
+.hero-copy { position: absolute; inset: 0; display: flex; align-items: flex-start; justify-content: flex-start; text-align: left;
+  padding: calc(88px + env(safe-area-inset-top, 0px)) var(--pad) 0 max(var(--pad), env(safe-area-inset-left, 0px)); pointer-events: none; }
+.hero-copy h1 { font-weight: 500; letter-spacing: -0.045em; line-height: 1.18; color: rgba(255,255,255,.92);
+  font-size: clamp(24px, 3.6vw, 52px); max-width: min(18ch, 100%); }
+.hero-media { position: absolute; inset: 0; pointer-events: none; }
+.hero-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  mix-blend-mode: screen; will-change: transform; transform: translateZ(0); }
+
+.apps { background: #0d0d0e; }
+.scene { position: absolute; inset: 0; opacity: 0; transition: opacity .55s ease; }
+.scene.is-on { opacity: 1; }
+.scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.scene .bg { filter: blur(28px) saturate(1.08) brightness(0.55); transform: scale(1.14); }
+.scene .cable { z-index: 2; }
+
+.apps-ui { position: absolute; inset: 0; z-index: 5; display: grid; grid-template-columns: auto 1fr auto; align-items: end;
+  padding: calc(88px + env(safe-area-inset-top, 0px)) max(var(--pad), env(safe-area-inset-right, 0px)) calc(34px + var(--safe-bottom)) max(var(--pad), env(safe-area-inset-left, 0px)); pointer-events: none; }
+.apps-ui > * { pointer-events: auto; }
+.menu { width: 320px; background: var(--glass); border: 0; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+  border-radius: 10px; padding: 22px 18px; }
+.opt { display: block; width: 100%; text-align: left; background: none; border: 0; color: rgba(255,255,255,.42);
+  font-size: 17px; font-weight: 500; letter-spacing: -0.02em; padding: 9px 4px; min-height: 44px; cursor: pointer;
+  transition: color .25s ease; -webkit-tap-highlight-color: transparent; }
+.opt.is-on { color: #fff; }
+.opt img { display: block; width: 100%; height: 0; object-fit: cover; border-radius: 8px; margin: 0; opacity: 0;
+  transition: height .45s ease, opacity .35s ease, margin .45s ease; }
+.opt.is-on img { height: 172px; margin: 12px 0 10px; opacity: 1; }
+.hotspot { width: 54px; height: 54px; margin: 0 auto; align-self: center; border: 1.5px solid rgba(255,255,255,.85);
+  border-radius: 50%; display: grid; place-items: center; pointer-events: none; }
+.hotspot i { width: 8px; height: 8px; background: #fff; border-radius: 50%; }
+.card { width: min(420px, 34vw); background: var(--glass-2); border: 0; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+  border-radius: 14px; padding: 28px 28px 26px; min-height: 280px; }
+.card h2 { font-size: clamp(28px, 2.8vw, 42px); font-weight: 600; letter-spacing: -0.04em; margin-bottom: 22px; }
+.spec { display: flex; gap: 10px; margin: 0 0 16px; align-items: flex-start; }
+.spec b { display: block; width: 3px; height: 14px; margin-top: 3px; background: var(--red); flex-shrink: 0; border-radius: 2px; }
+.spec small { display: block; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); font-weight: 600; margin-bottom: 4px; }
+.spec span { font-size: 15px; font-weight: 500; word-break: break-word; }
+.tag { display: inline-block; margin-top: 4px; background: var(--red); color: #fff; font-size: 11px; font-weight: 600;
+  padding: 4px 8px; border-radius: 6px; max-width: 100%; word-break: break-word; }
+.swatches { display: flex; gap: 8px; margin-top: 8px; }
+.swatches i { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(255,255,255,.35); display: block; }
+.more { position: absolute; left: 50%; bottom: calc(14px + var(--safe-bottom)); transform: translateX(-50%); z-index: 6;
+  border: 0; background: rgba(20,20,22,.28); backdrop-filter: blur(16px); color: rgba(255,255,255,.78);
+  padding: 12px 20px; border-radius: 999px; font-size: 14px; font-weight: 500; text-decoration: none; text-align: center;
+  max-width: calc(100% - 28px); white-space: normal; line-height: 1.3; -webkit-tap-highlight-color: transparent; }
+
+.track { position: relative; z-index: 0; }
+
+@media (max-width: 1024px) {
+  .menu { width: min(320px, 38vw); }
+  .card { width: min(420px, 40vw); }
+}
+@media (max-width: 900px) {
+  .nav-wrap { padding: 0 10px; }
+  .nav { gap: 8px; padding: 4px 4px 4px 10px; width: 100%; max-width: 100%; }
+  .logo { padding-right: 4px; min-width: 0; }
+  .logo span { font-size: 15px; }
+  .seg { flex-shrink: 0; }
+  .seg button { font-size: 11px; padding: 8px 10px; }
+  .hero-copy { padding: calc(76px + env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) 0 max(14px, env(safe-area-inset-left, 0px)); }
+  .hero-copy h1 { font-size: clamp(22px, 6.2vw, 28px); line-height: 1.22; max-width: 100%; }
+  .apps-ui { grid-template-columns: 1fr; grid-template-rows: auto auto; align-content: end; gap: 10px;
+    padding: calc(72px + env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) calc(58px + var(--safe-bottom)) max(14px, env(safe-area-inset-left, 0px)); }
+  .hotspot { display: none; }
+  .menu { order: 2; width: 100%; display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 10px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+  .menu::-webkit-scrollbar { display: none; }
+  .card { order: 1; width: 100%; min-height: 0; padding: 18px 16px; }
+  .card h2 { font-size: clamp(22px, 6vw, 26px); margin-bottom: 12px; }
+  .opt { flex: 0 0 auto; width: min(168px, 44vw); font-size: 13px; line-height: 1.25; padding: 8px 6px; scroll-snap-align: center; }
+  .opt img { display: none; }
+  .opt.is-on img { display: block; height: 64px; margin: 8px 0 6px; }
+  .spec { margin-bottom: 12px; }
+  .spec span { font-size: 14px; }
+  .spec small { font-size: 9px; }
+  .more { bottom: calc(10px + var(--safe-bottom)); font-size: 12px; padding: 10px 16px; }
+}
+@media (max-width: 480px) {
+  .seg button { font-size: 10px; padding: 8px 8px; }
+  .logo svg { width: 18px; height: 18px; }
+  .logo span { font-size: 14px; }
+  .hero-copy h1 { font-size: 21px; }
+  .opt { width: min(152px, 48vw); font-size: 12px; }
+  .card h2 { font-size: 21px; }
+  .tag { font-size: 10px; padding: 3px 6px; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-copy { padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
+  .hero-copy h1 { font-size: 20px; max-width: 24ch; }
+  .apps-ui { padding-top: calc(56px + env(safe-area-inset-top, 0px)); padding-bottom: calc(48px + var(--safe-bottom)); gap: 8px; }
+  .card { padding: 14px; }
+  .card h2 { font-size: 20px; margin-bottom: 8px; }
+  .spec { margin-bottom: 8px; }
+  .opt.is-on img { height: 48px; }
+}
+</style>
+</head>
+<body>
+<div class="boot" id="boot">
+  <div class="bar"><i id="bootBar"></i></div>
+  <p id="bootPct">LOADING 0%</p>
+</div>
+
+<div class="nav-wrap">
+  <nav class="nav">
+    <a href="#top" class="logo" aria-label="cordex">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10.2" stroke="white" stroke-width="1.4"/>
+        <path d="M8.2 16.4V7.6h4.1c2.05 0 3.25 1.05 3.25 2.55 0 1.08-.62 1.95-1.62 2.28L16.4 16.4h-2.2l-2.18-3.55H10v3.55H8.2zm1.8-5.15h2.02c.92 0 1.48-.5 1.48-1.22S13 8.8 12.08 8.8H10v2.45z" fill="white"/>
+      </svg>
+      <span>cordex</span>
+    </a>
+    <div class="seg">
+      <button type="button" id="btnFull" class="is-on">Full mode</button>
+      <button type="button" id="btnOverview">Explore</button>
+    </div>
+  </nav>
+</div>
+
+<div class="stage" id="stage">
+  <section class="layer hero" id="heroLayer">
+    <div class="hero-copy">
+      <h1>We protect transport safer across all industries</h1>
+    </div>
+    <div class="hero-media">
+      <video id="heroVideo" muted playsinline webkit-playsinline preload="auto" disablepictureinpicture
+        poster="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_211619_45cae3f3-ef0b-4c80-8102-d1b92a895304.png&w=1920&q=85"></video>
+    </div>
+  </section>
+  <section class="layer apps" id="appsLayer">
+    <div class="scene is-on" data-i="0">
+      <img class="bg" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195408_3baa90af-104c-4651-a954-4c32d032f447.png&w=1920&q=85">
+      <img class="cable" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_205336_d8018410-76ae-4756-bce5-51737d6c83a2.png&w=1920&q=85">
+    </div>
+    <div class="scene" data-i="1">
+      <img class="bg" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195510_80256fb7-1e2d-4135-be89-85b9c9736604.png&w=1920&q=85">
+      <img class="cable" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_205412_dea76893-5f89-4ef5-ad3f-6d5889502ed4.png&w=1920&q=85">
+    </div>
+    <div class="scene" data-i="2">
+      <img class="bg" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195543_44e0ac0c-4c7b-4a94-a8b0-935bd48a1503.png&w=1920&q=85">
+      <img class="cable" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_205443_924891fc-e4fa-452d-a187-95614fdc06eb.png&w=1920&q=85">
+    </div>
+    <div class="scene" data-i="3">
+      <img class="bg" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195629_69f05c67-a2fe-4235-a5ff-233c0bdda517.png&w=1920&q=85">
+      <img class="cable" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_205904_ad824661-4b68-42c0-b922-22b11ccff041.png&w=1920&q=85">
+    </div>
+    <div class="scene" data-i="4">
+      <img class="bg" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195701_5e5cb558-d608-44b3-81af-6098c19701f9.png&w=1920&q=85">
+      <img class="cable" alt="" src="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_210026_33e66723-2c92-4fa2-89ba-8da99891d131.png&w=1920&q=85">
+    </div>
+    <div class="apps-ui">
+      <div class="menu" id="menu"></div>
+      <div class="hotspot" aria-hidden="true"><i></i></div>
+      <article class="card" id="card"></article>
+    </div>
+    <a class="more" id="more" href="#">Learn more about&hellip;</a>
+  </section>
+</div>
+
+<div class="track" id="track"></div>
+
+<script>
+(function() {
+  "use strict";
+
+  const VIDEO_URL = "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/77806b3d-8a1a-4df5-af52-0651710f8a85.mp4";
+
+  const APPS = [
+    { label: "Construction equipment", title: "Armatex CHG", more: "More about Armatex CHG",
+      thumb: "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195408_3baa90af-104c-4651-a954-4c32d032f447.png&w=640&q=80",
+      specs: [
+        { k: "Service temperature", v: "\u221255\u00B0C to +200\u00B0C" },
+        { k: "Impact resistance", v: "LV 312-3 X < 25" },
+        { k: "Wear resistance", tag: "ISO 6722-1 CLASS 4" }
+      ] },
+    { label: "Electric & hybrid", title: "Armatex VHG10 Purple", more: "More about Armatex VHG10",
+      thumb: "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195510_80256fb7-1e2d-4135-be89-85b9c9736604.png&w=640&q=80",
+      specs: [
+        { k: "Service temperature", v: "\u221270\u00B0C to +225\u00B0C (Peaks at +300\u00B0C)" },
+        { k: "Impact resistance", v: "LV 312-3 X < 25" }
+      ] },
+    { label: "Buses and trucks", title: "Flexline PS", more: "More about Flexline PS",
+      thumb: "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195543_44e0ac0c-4c7b-4a94-a8b0-935bd48a1503.png&w=640&q=80",
+      colors: ["#111", "#e85a1a", "#f4f4f4", "#7a4aa8"],
+      specs: [
+        { k: "Service temperature", v: "\u221270\u00B0C to +150\u00B0C" },
+        { k: "Stretch ratio", v: "1:2" },
+        { k: "Wear resistance", tag: "ISO 6722-1 CLASS 4 (4,000 \u2013 14,999 CYCLES)" }
+      ] },
+    { label: "Rail systems", title: "Flexline RX", more: "More about Flexline RX",
+      thumb: "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195629_69f05c67-a2fe-4235-a5ff-233c0bdda517.png&w=640&q=80",
+      specs: [
+        { k: "Service temperature", v: "\u221250\u00B0C to +180\u00B0C" },
+        { k: "Fire performance", v: "EN 45545-2 HL3" },
+        { k: "Shock rating", v: "IEC 61373 Category 1" }
+      ] },
+    { label: "Agricultural machines", title: "Armatex AG", more: "More about Armatex AG",
+      thumb: "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260906_195701_5e5cb558-d608-44b3-81af-6098c19701f9.png&w=640&q=80",
+      specs: [
+        { k: "Service temperature", v: "\u221240\u00B0C to +150\u00B0C" },
+        { k: "Dirt & moisture", v: "IP6K9K sealed jackets" },
+        { k: "Wear resistance", tag: "ISO 6722-1 CLASS 3" }
+      ] }
+  ];
+
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const range = (v, a, b) => clamp((v - a) / (b - a), 0, 1);
+  const MOBILE_BP = 900;
+  const STEPS = APPS.length - 1;
+
+  const video = document.getElementById("heroVideo");
+  const heroLayer = document.getElementById("heroLayer");
+  const appsLayer = document.getElementById("appsLayer");
+  const track = document.getElementById("track");
+  const scenes = document.querySelectorAll(".scene");
+  const menu = document.getElementById("menu");
+  const card = document.getElementById("card");
+  const more = document.getElementById("more");
+  const btnFull = document.getElementById("btnFull");
+  const btnOverview = document.getElementById("btnOverview");
+  const boot = document.getElementById("boot");
+  const bootBar = document.getElementById("bootBar");
+  const bootPct = document.getElementById("bootPct");
+
+  let heroTarget = 0;
+  let seekAt = 0;
+  let dur = 6;
+  let ready = false;
+  let raf = 0, index = -1, wheelLock = false;
+  let vh = innerHeight, lastW = innerWidth;
+  let heroLen = 0, fadeLen = 0, appsLen = 0, appsStart = 0;
+  let lastFade = -1;
+  let lastOnApps = null;
+  let opts = [];
+
+  function layout(force) {
+    const h = Math.max(1, innerHeight);
+    if (!force && innerWidth === lastW && Math.abs(h - vh) < 120) return;
+    vh = h;
+    lastW = innerWidth;
+    document.documentElement.style.setProperty("--vh", h + "px");
+    heroLen = 4.4 * vh;
+    fadeLen = 1.0 * vh;
+    appsLen = 1.0 * STEPS * vh;
+    appsStart = heroLen + fadeLen;
+    track.style.height = (appsStart + appsLen + vh) + "px";
+  }
+
+  function buildMenu() {
+    menu.innerHTML = "";
+    opts = [];
+    APPS.forEach((item, i) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt" + (i === 0 ? " is-on" : "");
+      btn.innerHTML = item.label + '<img alt="" src="' + item.thumb + '">';
+      btn.addEventListener("click", () => setIndex(i, false));
+      menu.appendChild(btn);
+      opts.push(btn);
+    });
+  }
+
+  function renderCard(i) {
+    const item = APPS[i];
+    let html = "<h2>" + item.title + "</h2>";
+    item.specs.forEach(s => {
+      html += '<div class="spec"><b></b><div><small>' + s.k + "</small>";
+      if (s.tag) {
+        html += '<span class="tag">' + s.tag + "</span>";
+      } else {
+        html += "<span>" + s.v + "</span>";
+      }
+      html += "</div></div>";
+    });
+    if (item.colors) {
+      html += '<div class="spec"><b></b><div><small>Supplied in</small><div class="swatches">';
+      item.colors.forEach(c => {
+        html += '<i style="background:' + c + '"></i>';
+      });
+      html += "</div></div></div>";
+    }
+    card.innerHTML = html;
+    more.textContent = item.more;
+  }
+
+  function setIndex(i, fromScroll) {
+    if (!Number.isFinite(i)) return;
+    const next = clamp(Math.round(i), 0, STEPS);
+    if (next !== index) {
+      index = next;
+      scenes.forEach((s, si) => s.classList.toggle("is-on", si === index));
+      opts.forEach((o, oi) => o.classList.toggle("is-on", oi === index));
+      renderCard(index);
+      if (innerWidth <= MOBILE_BP) {
+        const a = opts[index].getBoundingClientRect();
+        const m = menu.getBoundingClientRect();
+        menu.scrollBy({ left: (a.left + a.width / 2) - (m.left + m.width / 2), behavior: "smooth" });
+      }
+      if (!fromScroll) {
+        scrollTo({ top: appsStart + (index / STEPS) * appsLen, behavior: "smooth" });
+      }
+    }
+  }
+
+  function paintUI() {
+    const y = scrollY || pageYOffset || 0;
+    const fadeP = range(y, heroLen, appsStart);
+    if (fadeP !== lastFade) {
+      lastFade = fadeP;
+      heroLayer.style.opacity = 1 - fadeP;
+      appsLayer.style.opacity = fadeP;
+      heroLayer.style.visibility = fadeP === 1 ? "hidden" : "visible";
+      appsLayer.style.visibility = fadeP === 0 ? "hidden" : "visible";
+    }
+    setIndex(range(y, appsStart, appsStart + appsLen) * STEPS, true);
+    const onApps = fadeP > 0.5;
+    if (onApps !== lastOnApps) {
+      lastOnApps = onApps;
+      btnFull.classList.toggle("is-on", !onApps);
+      btnOverview.classList.toggle("is-on", onApps);
+    }
+  }
+
+  function frame() {
+    if (ready && dur) {
+      const gap = heroTarget * dur - seekAt;
+      if (Math.abs(gap) > 0.0008) {
+        seekAt += gap * 0.115;
+        if (video.readyState >= 2 && !video.seeking) {
+          try { video.currentTime = seekAt; } catch (e) {}
+        }
+      }
+    }
+    paintUI();
+    raf = requestAnimationFrame(frame);
+  }
+
+  let started = false, attached = false;
+
+  function setBootProgress(fraction) {
+    bootBar.style.transform = "scaleX(" + fraction + ")";
+    bootPct.textContent = "LOADING " + Math.round(fraction * 100) + "%";
+  }
+
+  function start() {
+    if (started) return;
+    started = ready = true;
+    boot.classList.add("done");
+    heroTarget = clamp((scrollY || 0) / heroLen, 0, 1);
+    seekAt = heroTarget * dur;
+    renderCard(0);
+    paintUI();
+  }
+
+  function attach(src) {
+    if (attached) return;
+    attached = true;
+    video.addEventListener("loadedmetadata", () => {
+      dur = isFinite(video.duration) && video.duration > 0 ? video.duration : 6;
+      video.pause();
+      heroTarget = clamp((scrollY || 0) / heroLen, 0, 1);
+      seekAt = heroTarget * dur;
+      try { video.currentTime = seekAt; } catch (e) {}
+    });
+    video.addEventListener("loadeddata", start);
+    video.addEventListener("canplaythrough", start);
+    video.addEventListener("error", start);
+    video.src = src;
+    video.load();
+    setTimeout(start, 12000);
+  }
+
+  function preload() {
+    const ctrl = "AbortController" in window ? new AbortController() : null;
+    const bail = setTimeout(() => {
+      if (attached) return;
+      if (ctrl) ctrl.abort();
+      setBootProgress(1);
+      attach(VIDEO_URL);
+    }, 15000);
+    fetch(VIDEO_URL, ctrl ? { signal: ctrl.signal } : undefined)
+      .then(res => {
+        if (!res.ok || !res.body) throw new Error("bad response");
+        const total = parseInt(res.headers.get("content-length") || "0", 10);
+        const reader = res.body.getReader();
+        const chunks = [];
+        let got = 0;
+        function pump() {
+          return reader.read().then(({ done, value }) => {
+            if (done) return;
+            chunks.push(value);
+            got += value.length;
+            setBootProgress(total ? got / total : Math.min(got / 6.5e6, 0.95));
+            return pump();
+          });
+        }
+        return pump().then(() => new Blob(chunks, { type: "video/mp4" }));
+      })
+      .then(blob => {
+        clearTimeout(bail);
+        setBootProgress(1);
+        attach(URL.createObjectURL(blob));
+      })
+      .catch(() => {
+        clearTimeout(bail);
+        setBootProgress(1);
+        attach(VIDEO_URL);
+      });
+  }
+
+  function unlock() {
+    const p = video.play();
+    if (p && p.then) p.then(() => video.pause()).catch(() => {});
+    else video.pause();
+  }
+  ["touchstart", "pointerdown", "wheel", "keydown"].forEach(ev => {
+    addEventListener(ev, unlock, { once: true, passive: true });
+  });
+
+  function inAppsZone() {
+    const y = scrollY || pageYOffset || 0;
+    return y >= appsStart - 1 && y <= appsStart + appsLen + 1;
+  }
+
+  addEventListener("scroll", () => {
+    heroTarget = clamp((scrollY || pageYOffset || 0) / heroLen, 0, 1);
+  }, { passive: true });
+
+  addEventListener("resize", () => {
+    layout(false);
+    heroTarget = clamp((scrollY || pageYOffset || 0) / heroLen, 0, 1);
+  });
+
+  addEventListener("orientationchange", () => {
+    layout(true);
+    heroTarget = clamp((scrollY || pageYOffset || 0) / heroLen, 0, 1);
+  });
+
+  addEventListener("wheel", (e) => {
+    if (!inAppsZone() || wheelLock) return;
+    const down = e.deltaY > 0;
+    if ((down && index >= STEPS) || (!down && index <= 0)) return;
+    e.preventDefault();
+    wheelLock = true;
+    setIndex(index + (down ? 1 : -1), false);
+    setTimeout(() => { wheelLock = false; }, 620);
+  }, { passive: false });
+
+  let startY = 0, startX = 0;
+  addEventListener("touchstart", (e) => {
+    if (e.touches.length) {
+      startY = e.touches[0].clientY;
+      startX = e.touches[0].clientX;
+    }
+  }, { passive: true });
+
+  addEventListener("touchend", (e) => {
+    if (!inAppsZone()) return;
+    const endY = e.changedTouches[0].clientY;
+    const endX = e.changedTouches[0].clientX;
+    const dy = startY - endY;
+    const dx = Math.abs(startX - endX);
+    if (Math.abs(dy) < 40 || dx > 60) return;
+    const down = dy > 0;
+    if ((down && index >= STEPS) || (!down && index <= 0)) return;
+    setIndex(index + (down ? 1 : -1), false);
+  }, { passive: true });
+
+  btnFull.addEventListener("click", () => scrollTo({ top: 0, behavior: "smooth" }));
+  btnOverview.addEventListener("click", () => scrollTo({ top: appsStart, behavior: "smooth" }));
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      cancelAnimationFrame(raf);
+    } else {
+      raf = requestAnimationFrame(frame);
+    }
+  });
+
+  video.pause();
+  video.muted = true;
+  layout(true);
+  buildMenu();
+  renderCard(0);
+  paintUI();
+  preload();
+  raf = requestAnimationFrame(frame);
+
+})();
+</script>
+</body>
+</html>
