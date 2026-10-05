@@ -109,13 +109,27 @@ function IconWhatsApp() {
   );
 }
 
+const prefetched = new Set<string>();
+function prefetchProject(file: string) {
+  if (prefetched.has(file)) return;
+  prefetched.add(file);
+  const link = document.createElement("link");
+  link.rel = "prefetch";
+  link.href = file;
+  document.head.appendChild(link);
+}
+
 function ProjectCard({ project, language, label, onOpen }: { project: Project; language: Language; label: string; onOpen: (project: Project) => void }) {
+  const thumb = project.file.replace("/project-files/", "/project-thumbs/").replace(/\.html$/, ".webp");
   return (
     <article className="project-card">
       <div
         className="project-trigger"
         role="button"
         tabIndex={0}
+        onMouseEnter={() => prefetchProject(project.file)}
+        onTouchStart={() => prefetchProject(project.file)}
+        onFocus={() => prefetchProject(project.file)}
         onClick={() => onOpen(project)}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
@@ -126,7 +140,7 @@ function ProjectCard({ project, language, label, onOpen }: { project: Project; l
         aria-label={`View ${project.title}`}
       >
         <span className="project-thumb">
-          <iframe src={project.file} title={`${project.title} preview`} loading="lazy" tabIndex={-1} aria-hidden="true" />
+          <img src={thumb} alt={`${project.title} preview`} loading="lazy" decoding="async" width={800} height={500} />
           {project.featured && <span className="featured-badge">{label}</span>}
           <span className="project-overlay">
             <span>“{project.quote[language]}”</span>
