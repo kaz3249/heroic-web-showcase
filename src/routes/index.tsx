@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, Mail, Search, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "../lib/projects";
+import { setViewerOpen, startIdleWarmup, warmProject } from "../lib/warm";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -109,15 +110,6 @@ function IconWhatsApp() {
   );
 }
 
-const prefetched = new Set<string>();
-function prefetchProject(file: string) {
-  if (prefetched.has(file)) return;
-  prefetched.add(file);
-  const link = document.createElement("link");
-  link.rel = "prefetch";
-  link.href = file;
-  document.head.appendChild(link);
-}
 
 function ProjectCard({ project, language, label, onOpen }: { project: Project; language: Language; label: string; onOpen: (project: Project) => void }) {
   const thumb = project.file.replace("/project-files/", "/project-thumbs/").replace(/\.html$/, ".webp");
@@ -127,9 +119,9 @@ function ProjectCard({ project, language, label, onOpen }: { project: Project; l
         className="project-trigger"
         role="button"
         tabIndex={0}
-        onMouseEnter={() => prefetchProject(project.file)}
-        onTouchStart={() => prefetchProject(project.file)}
-        onFocus={() => prefetchProject(project.file)}
+        onMouseEnter={() => warmProject(project)}
+        onTouchStart={() => warmProject(project)}
+        onFocus={() => warmProject(project)}
         onClick={() => onOpen(project)}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
@@ -183,6 +175,8 @@ function KazeStudio() {
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState<"featured" | "latest">("featured");
   const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [frameReady, setFrameReady] = useState(false);
+  const [slowLoad, setSlowLoad] = useState(false);
   const t = copy[language];
   const frameRef = useRef<HTMLIFrameElement>(null);
   const savedScroll = useRef<number | null>(null);
@@ -207,6 +201,29 @@ function KazeStudio() {
     window.addEventListener("keydown", close);
     return () => { document.body.classList.remove("viewer-open"); window.removeEventListener("keydown", close); };
   }, [activeProject, closeViewer]);
+
+  useEffect(() => startIdleWarmup(), []);
+
+  useEffect(() => {
+    setViewerOpen(Boolean(activeProject));
+    setFrameReady(false);
+    setSlowLoad(false);
+    if (!activeProject) return;
+    const started = Date.now();
+    const poll = setInterval(() => {
+      try {
+        const doc = frameRef.current?.contentDocument;
+        if (doc && doc.URL !== "about:blank" && doc.readyState !== "loading") setFrameReady(true);
+      } catch { /* not readable */ }
+      if (Date.now() - started >= 4000) setFrameReady(true);
+    }, 100);
+    const slow = setTimeout(() => setSlowLoad(true), 10000);
+    return () => { clearInterval(poll); clearTimeout(slow); };
+  }, [activeProject]);
+
+  useEffect(() => {
+    if (frameReady) setSlowLoad(false);
+  }, [frameReady]);
 
   useEffect(() => {
     if (!activeProject && savedScroll.current !== null) {
@@ -306,7 +323,18 @@ function KazeStudio() {
               <button className="viewer-close" onClick={closeViewer} aria-label={t.close}><span>{t.close}</span><X size={17} /></button>
             </div>
           </div>
-          <iframe ref={frameRef} src={activeProject.file} title={activeProject.title} />
+          <div className="viewer-stage">
+            {!frameReady && (
+              <>
+                <img className="viewer-placeholder" src={`/project-thumbs/${activeProject.slug}.webp`} alt="" aria-hidden="true" />
+                <span className="viewer-progress" aria-hidden="true" />
+              </>
+            )}
+            <iframe ref={frameRef} className={frameReady ? "ready" : ""} src={activeProject.file} title={activeProject.title} onLoad={(event) => { if (event.currentTarget.contentDocument?.URL !== "about:blank") setFrameReady(true); }} />
+            {slowLoad && !frameReady && (
+              <Link className="viewer-slow" to="/projects/$slug" params={{ slug: activeProject.slug }} target="_blank">Still loading... open full page</Link>
+            )}
+          </div>
         </div>
       )}
     </main>
