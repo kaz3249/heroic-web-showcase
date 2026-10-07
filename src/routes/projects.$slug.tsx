@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { getProject } from "../lib/projects";
 
 export const Route = createFileRoute("/projects/$slug")({
@@ -22,5 +23,15 @@ export const Route = createFileRoute("/projects/$slug")({
 
 function ProjectPage() {
   const project = Route.useLoaderData();
-  return <iframe className="standalone-project" src={project.file} title={project.title} />;
+  useEffect(() => {
+    window.location.replace(project.file);
+  }, [project.file]);
+  return (
+    <a
+      href={project.file}
+      style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0a", color: "#f5f5f5", fontFamily: "system-ui, sans-serif", textDecoration: "none", fontSize: "1.1rem" }}
+    >
+      {project.title}
+    </a>
+  );
 }

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, Mail, Search, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "../lib/projects";
 
 export const Route = createFileRoute("/")({
@@ -157,12 +157,37 @@ function ProjectCard({ project, language, label, onOpen }: { project: Project; l
   );
 }
 
+function releaseFrame(frame: HTMLIFrameElement | null) {
+  if (!frame) return;
+  try {
+    const doc = frame.contentDocument;
+    doc?.querySelectorAll("video, audio").forEach((node) => {
+      const media = node as HTMLMediaElement;
+      media.pause();
+      media.removeAttribute("src");
+      media.querySelectorAll("source").forEach((source) => source.remove());
+      media.load();
+    });
+    doc?.querySelectorAll("canvas").forEach((canvas) => {
+      const gl = (canvas.getContext("webgl2") ?? canvas.getContext("webgl")) as WebGLRenderingContext | null;
+      gl?.getExtension("WEBGL_lose_context")?.loseContext();
+    });
+  } catch {
+    // page already gone or not readable
+  }
+  frame.src = "about:blank";
+}
+
 function KazeStudio() {
   const [language, setLanguage] = useState<Language>("en");
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState<"featured" | "latest">("featured");
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const t = copy[language];
+  const frameRef = useRef<HTMLIFrameElement>(null);
+  const savedScroll = useRef<number | null>(null);
+  const openProject = (project: Project) => { savedScroll.current = window.scrollY; setActiveProject(project); };
+  const closeViewer = useCallback(() => { releaseFrame(frameRef.current); setActiveProject(null); }, []);
 
   const visibleProjects = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -178,13 +203,21 @@ function KazeStudio() {
 
   useEffect(() => {
     document.body.classList.toggle("viewer-open", Boolean(activeProject));
-    const close = (event: KeyboardEvent) => event.key === "Escape" && setActiveProject(null);
+    const close = (event: KeyboardEvent) => event.key === "Escape" && closeViewer();
     window.addEventListener("keydown", close);
     return () => { document.body.classList.remove("viewer-open"); window.removeEventListener("keydown", close); };
+  }, [activeProject, closeViewer]);
+
+  useEffect(() => {
+    if (!activeProject && savedScroll.current !== null) {
+      window.scrollTo({ top: savedScroll.current, behavior: "instant" as ScrollBehavior });
+      savedScroll.current = null;
+    }
   }, [activeProject]);
 
   return (
     <main className="kaze-site">
+      <div hidden={Boolean(activeProject)}>
       <a className="booking-strip" href="mailto:kze6860@gmail.com"><span>✦</span>{t.booking}</a>
       <header className="site-nav">
         <a href="#top" aria-label="Kaze Studio home"><KazeMark /></a>
@@ -229,7 +262,7 @@ function KazeStudio() {
           </div>
         </div>
         <div className="project-grid">
-          {visibleProjects.map((project) => <ProjectCard key={project.slug} project={project} language={language} label={t.tag} onOpen={setActiveProject} />)}
+          {visibleProjects.map((project) => <ProjectCard key={project.slug} project={project} language={language} label={t.tag} onOpen={openProject} />)}
           {!visibleProjects.length && <p className="empty-state">{t.empty}</p>}
         </div>
       </section>
@@ -262,6 +295,7 @@ function KazeStudio() {
         </div>
         <span className="footer-location">{t.location}</span>
       </footer>
+      </div>
 
       {activeProject && (
         <div className="project-viewer" role="dialog" aria-modal="true" aria-label={activeProject.title}>
@@ -269,10 +303,10 @@ function KazeStudio() {
             <div className="viewer-title"><KazeMark /><span>{activeProject.title}</span></div>
             <div className="viewer-actions">
               <Link className="viewer-link" to="/projects/$slug" params={{ slug: activeProject.slug }} target="_blank">{t.open}<ArrowUpRight size={14} /></Link>
-              <button className="viewer-close" onClick={() => setActiveProject(null)} aria-label={t.close}><span>{t.close}</span><X size={17} /></button>
+              <button className="viewer-close" onClick={closeViewer} aria-label={t.close}><span>{t.close}</span><X size={17} /></button>
             </div>
           </div>
-          <iframe src={activeProject.file} title={activeProject.title} />
+          <iframe ref={frameRef} src={activeProject.file} title={activeProject.title} />
         </div>
       )}
     </main>
