@@ -1,0 +1,6 @@
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/project-thumbs/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/project-files/*
+  Cache-Control: public, max-age=300, stale-while-revalidate=86400
