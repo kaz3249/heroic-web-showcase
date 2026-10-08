@@ -269,7 +269,7 @@
       <section id="about" className="min-h-screen px-5 sm:px-8 md:px-10 py-20 flex flex-col items-center justify-center gap-10 sm:gap-14 md:gap-16 relative">
         {ABOUT_DECORATIONS.map((d, i) => (
           <FadeIn key={i} delay={d.delay} x={d.x} y={0} duration={0.9} className={`absolute ${d.className}`}>
-            <img src={d.src} alt="" className="w-full h-auto object-contain" />
+            <img loading="lazy" decoding="async" src={d.src} alt="" className="w-full h-auto object-contain" />
           </FadeIn>
         ))}
         <FadeIn y={40}>
