@@ -34,8 +34,8 @@
   </script>
 
   <!-- React UMD -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
   
   <!-- Babel -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -556,7 +556,7 @@
             <div className="grid md:grid-cols-3 gap-6 auto-rows-[250px] md:auto-rows-[300px]">
               {projects.map((project, i) => (
                 <div key={i} className={`group relative overflow-hidden rounded-2xl cursor-pointer ${project.span}`}>
-                  <img 
+                  <img loading="lazy" decoding="async" 
                     src={project.img} 
                     alt={project.title} 
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
@@ -605,7 +605,7 @@
               {articles.map((article, i) => (
                 <article key={i} className="group cursor-pointer">
                   <div className="aspect-[4/3] overflow-hidden rounded-2xl mb-6">
-                    <img 
+                    <img loading="lazy" decoding="async" 
                       src={article.img} 
                       alt={article.title} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

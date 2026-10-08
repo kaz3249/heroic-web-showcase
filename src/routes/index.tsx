@@ -2,7 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, Mail, Search, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "../lib/projects";
-import { setViewerOpen, startIdleWarmup, warmProject } from "../lib/warm";
+
+const prefetched = new Set<string>();
+function prefetchFile(url: string) {
+  if (prefetched.has(url)) return;
+  prefetched.add(url);
+  const link = document.createElement("link");
+  link.rel = "prefetch";
+  link.href = url;
+  document.head.appendChild(link);
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -119,9 +128,9 @@ function ProjectCard({ project, language, label, onOpen }: { project: Project; l
         className="project-trigger"
         role="button"
         tabIndex={0}
-        onMouseEnter={() => warmProject(project)}
-        onTouchStart={() => warmProject(project)}
-        onFocus={() => warmProject(project)}
+        onMouseEnter={() => prefetchFile(project.file)}
+        onTouchStart={() => prefetchFile(project.file)}
+        onFocus={() => prefetchFile(project.file)}
         onClick={() => onOpen(project)}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
@@ -170,6 +179,25 @@ function releaseFrame(frame: HTMLIFrameElement | null) {
   frame.src = "about:blank";
 }
 
+function activateFrame(frame: HTMLIFrameElement) {
+  try {
+    frame.contentWindow?.focus();
+    const doc = frame.contentDocument;
+    if (!doc) return;
+    const playAll = () => doc.querySelectorAll("video[autoplay]").forEach((node) => {
+      const video = node as HTMLVideoElement;
+      if (video.paused) video.play().catch(() => {});
+    });
+    playAll();
+    const once = () => { playAll(); doc.removeEventListener("touchend", once); doc.removeEventListener("click", once); };
+    doc.addEventListener("touchend", once, { passive: true });
+    doc.addEventListener("click", once);
+  } catch {
+    // not readable
+  }
+}
+
+
 function KazeStudio() {
   const [language, setLanguage] = useState<Language>("en");
   const [query, setQuery] = useState("");
@@ -202,10 +230,7 @@ function KazeStudio() {
     return () => { document.body.classList.remove("viewer-open"); window.removeEventListener("keydown", close); };
   }, [activeProject, closeViewer]);
 
-  useEffect(() => startIdleWarmup(), []);
-
   useEffect(() => {
-    setViewerOpen(Boolean(activeProject));
     setFrameReady(false);
     setSlowLoad(false);
     if (!activeProject) return;
@@ -324,13 +349,9 @@ function KazeStudio() {
             </div>
           </div>
           <div className="viewer-stage">
-            {!frameReady && (
-              <>
-                <img className="viewer-placeholder" src={`/project-thumbs/${activeProject.slug}.webp`} alt="" aria-hidden="true" />
-                <span className="viewer-progress" aria-hidden="true" />
-              </>
-            )}
-            <iframe ref={frameRef} className={frameReady ? "ready" : ""} src={activeProject.file} title={activeProject.title} onLoad={(event) => { if (event.currentTarget.contentDocument?.URL !== "about:blank") setFrameReady(true); }} />
+            <iframe ref={frameRef} src={activeProject.file} title={activeProject.title} onLoad={(event) => { const frame = event.currentTarget; if (frame.contentDocument?.URL === "about:blank") return; setFrameReady(true); activateFrame(frame); }} />
+            <img className={`viewer-placeholder${frameReady ? " done" : ""}`} src={`/project-thumbs/${activeProject.slug}.webp`} alt="" aria-hidden="true" />
+            {!frameReady && <span className="viewer-progress" aria-hidden="true" />}
             {slowLoad && !frameReady && (
               <Link className="viewer-slow" to="/projects/$slug" params={{ slug: activeProject.slug }} target="_blank">Still loading... open full page</Link>
             )}

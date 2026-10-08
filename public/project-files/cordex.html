@@ -461,13 +461,18 @@ button, a { font-family: inherit; color: inherit; }
       });
   }
 
+  const UNLOCK_EVENTS = ["touchend", "pointerup", "click", "wheel", "keydown"];
   function unlock() {
     const p = video.play();
-    if (p && p.then) p.then(() => video.pause()).catch(() => {});
-    else video.pause();
+    if (p && p.then) {
+      p.then(() => {
+        video.pause();
+        UNLOCK_EVENTS.forEach(ev => removeEventListener(ev, unlock));
+      }).catch(() => {});
+    }
   }
-  ["touchstart", "pointerdown", "wheel", "keydown"].forEach(ev => {
-    addEventListener(ev, unlock, { once: true, passive: true });
+  UNLOCK_EVENTS.forEach(ev => {
+    addEventListener(ev, unlock, { passive: true });
   });
 
   function inAppsZone() {
