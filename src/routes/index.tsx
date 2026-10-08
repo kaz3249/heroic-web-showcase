@@ -2,7 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, Mail, Search, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "../lib/projects";
-import { setViewerOpen, startIdleWarmup, warmProject } from "../lib/warm";
+
+const prefetched = new Set<string>();
+function prefetchFile(url: string) {
+  if (prefetched.has(url)) return;
+  prefetched.add(url);
+  const link = document.createElement("link");
+  link.rel = "prefetch";
+  link.href = url;
+  document.head.appendChild(link);
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -119,9 +128,9 @@ function ProjectCard({ project, language, label, onOpen }: { project: Project; l
         className="project-trigger"
         role="button"
         tabIndex={0}
-        onMouseEnter={() => warmProject(project)}
-        onTouchStart={() => warmProject(project)}
-        onFocus={() => warmProject(project)}
+        onMouseEnter={() => prefetchFile(project.file)}
+        onTouchStart={() => prefetchFile(project.file)}
+        onFocus={() => prefetchFile(project.file)}
         onClick={() => onOpen(project)}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
@@ -169,6 +178,25 @@ function releaseFrame(frame: HTMLIFrameElement | null) {
   }
   frame.src = "about:blank";
 }
+
+function activateFrame(frame: HTMLIFrameElement) {
+  try {
+    frame.contentWindow?.focus();
+    const doc = frame.contentDocument;
+    if (!doc) return;
+    const playAll = () => doc.querySelectorAll("video[autoplay]").forEach((node) => {
+      const video = node as HTMLVideoElement;
+      if (video.paused) video.play().catch(() => {});
+    });
+    playAll();
+    const once = () => { playAll(); doc.removeEventListener("touchend", once); doc.removeEventListener("click", once); };
+    doc.addEventListener("touchend", once, { passive: true });
+    doc.addEventListener("click", once);
+  } catch {
+    // not readable
+  }
+}
+
 
 function KazeStudio() {
   const [language, setLanguage] = useState<Language>("en");
