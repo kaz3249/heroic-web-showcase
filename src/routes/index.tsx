@@ -202,10 +202,7 @@ function KazeStudio() {
     return () => { document.body.classList.remove("viewer-open"); window.removeEventListener("keydown", close); };
   }, [activeProject, closeViewer]);
 
-  useEffect(() => startIdleWarmup(), []);
-
   useEffect(() => {
-    setViewerOpen(Boolean(activeProject));
     setFrameReady(false);
     setSlowLoad(false);
     if (!activeProject) return;
@@ -324,13 +321,9 @@ function KazeStudio() {
             </div>
           </div>
           <div className="viewer-stage">
-            {!frameReady && (
-              <>
-                <img className="viewer-placeholder" src={`/project-thumbs/${activeProject.slug}.webp`} alt="" aria-hidden="true" />
-                <span className="viewer-progress" aria-hidden="true" />
-              </>
-            )}
-            <iframe ref={frameRef} className={frameReady ? "ready" : ""} src={activeProject.file} title={activeProject.title} onLoad={(event) => { if (event.currentTarget.contentDocument?.URL !== "about:blank") setFrameReady(true); }} />
+            <iframe ref={frameRef} src={activeProject.file} title={activeProject.title} onLoad={(event) => { const frame = event.currentTarget; if (frame.contentDocument?.URL === "about:blank") return; setFrameReady(true); activateFrame(frame); }} />
+            <img className={`viewer-placeholder${frameReady ? " done" : ""}`} src={`/project-thumbs/${activeProject.slug}.webp`} alt="" aria-hidden="true" />
+            {!frameReady && <span className="viewer-progress" aria-hidden="true" />}
             {slowLoad && !frameReady && (
               <Link className="viewer-slow" to="/projects/$slug" params={{ slug: activeProject.slug }} target="_blank">Still loading... open full page</Link>
             )}
