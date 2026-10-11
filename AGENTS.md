@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep home-page card video lifecycle in CardVideo and unmount it while the project viewer is open, so preview media frees its network and decoder resources without changing embedded sites.
