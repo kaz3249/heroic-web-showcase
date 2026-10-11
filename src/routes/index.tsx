@@ -2,16 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, Mail, Search, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { projects, type Project } from "../lib/projects";
-
-const prefetched = new Set<string>();
-function prefetchFile(url: string) {
-  if (prefetched.has(url)) return;
-  prefetched.add(url);
-  const link = document.createElement("link");
-  link.rel = "prefetch";
-  link.href = url;
-  document.head.appendChild(link);
-}
+import { CardVideo } from "../components/CardVideo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -120,7 +111,7 @@ function IconWhatsApp() {
 }
 
 
-function ProjectCard({ project, language, label, onOpen }: { project: Project; language: Language; label: string; onOpen: (project: Project) => void }) {
+function ProjectCard({ project, language, label, onOpen, videoEnabled }: { project: Project; language: Language; label: string; onOpen: (project: Project) => void; videoEnabled: boolean }) {
   const thumb = project.file.replace("/project-files/", "/project-thumbs/").replace(/\.html$/, ".webp");
   return (
     <article className="project-card">
@@ -128,9 +119,6 @@ function ProjectCard({ project, language, label, onOpen }: { project: Project; l
         className="project-trigger"
         role="button"
         tabIndex={0}
-        onMouseEnter={() => prefetchFile(project.file)}
-        onTouchStart={() => prefetchFile(project.file)}
-        onFocus={() => prefetchFile(project.file)}
         onClick={() => onOpen(project)}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
@@ -142,6 +130,7 @@ function ProjectCard({ project, language, label, onOpen }: { project: Project; l
       >
         <span className="project-thumb">
           <img src={thumb} alt={`${project.title} preview`} loading="lazy" decoding="async" width={800} height={500} />
+          {project.video && videoEnabled && <CardVideo src={project.video} poster={thumb} />}
           {project.featured && <span className="featured-badge">{label}</span>}
           <span className="project-overlay">
             <span>“{project.quote[language]}”</span>
@@ -304,7 +293,7 @@ function KazeStudio() {
           </div>
         </div>
         <div className="project-grid">
-          {visibleProjects.map((project) => <ProjectCard key={project.slug} project={project} language={language} label={t.tag} onOpen={openProject} />)}
+          {visibleProjects.map((project) => <ProjectCard key={project.slug} project={project} language={language} label={t.tag} onOpen={openProject} videoEnabled={!activeProject} />)}
           {!visibleProjects.length && <p className="empty-state">{t.empty}</p>}
         </div>
       </section>
