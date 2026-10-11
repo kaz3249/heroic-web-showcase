@@ -4,4 +4,4 @@
 - [x] Build responsive Kaze Studio portfolio shell
 - [x] Add project detail viewer routes
 - [x] Verify desktop and mobile layouts
-- [ ] Restore seven lightweight home-page card videos and verify mobile loading limits and viewer opening
+- [x] Restore seven lightweight home-page card videos; verify 390px visibility limits, unloading, and viewer opening (external video playback remained unavailable in sandbox)
