@@ -224,13 +224,21 @@ function KazeStudio() {
     setSlowLoad(false);
     if (!activeProject) return;
     const started = Date.now();
+    // Keep the picture up until the site has actually drawn something (some sites build their page with scripts after loading).
     const poll = setInterval(() => {
       try {
         const doc = frameRef.current?.contentDocument;
-        if (doc && doc.URL !== "about:blank" && doc.readyState !== "loading") setFrameReady(true);
+        const body = doc?.body;
+        if (doc && doc.URL !== "about:blank" && doc.readyState === "complete" && body && (body.innerText.trim().length > 0 || body.querySelector("img, video, canvas, svg"))) {
+          const visible = [...body.querySelectorAll("*")].some((el) => {
+            const r = (el as HTMLElement).getBoundingClientRect();
+            return r.height > 40 && r.width > 40 && el.tagName !== "SCRIPT";
+          });
+          if (visible) setFrameReady(true);
+        }
       } catch { /* not readable */ }
-      if (Date.now() - started >= 4000) setFrameReady(true);
-    }, 100);
+      if (Date.now() - started >= 15000) setFrameReady(true);
+    }, 150);
     const slow = setTimeout(() => setSlowLoad(true), 10000);
     return () => { clearInterval(poll); clearTimeout(slow); };
   }, [activeProject]);
@@ -338,7 +346,7 @@ function KazeStudio() {
             </div>
           </div>
           <div className="viewer-stage">
-            <iframe ref={frameRef} src={activeProject.file} title={activeProject.title} onLoad={(event) => { const frame = event.currentTarget; if (frame.contentDocument?.URL === "about:blank") return; setFrameReady(true); activateFrame(frame); }} />
+            <iframe ref={frameRef} src={activeProject.file} title={activeProject.title} onLoad={(event) => { const frame = event.currentTarget; if (frame.contentDocument?.URL === "about:blank") return; activateFrame(frame); }} />
             <img className={`viewer-placeholder${frameReady ? " done" : ""}`} src={`/project-thumbs/${activeProject.slug}.webp`} alt="" aria-hidden="true" />
             {!frameReady && <span className="viewer-progress" aria-hidden="true" />}
             {slowLoad && !frameReady && (
