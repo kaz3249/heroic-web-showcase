@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep home-page card video lifecycle in CardVideo and unmount it while the project viewer is open, so preview media frees its network and decoder resources without changing embedded sites.
+- Keep Jack's DOM motion helpers in a browser-native module under public/project-support so touch input and offscreen animation control work inside its original standalone HTML without replacing its libraries.
