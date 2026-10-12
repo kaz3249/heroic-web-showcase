@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Restore Jack 3D touch motion and reduce offscreen animation work; verify in the viewer on desktop and phone sizes
+
 - [x] Add uploaded websites as portfolio project files
 - [x] Build responsive Kaze Studio portfolio shell
 - [x] Add project detail viewer routes

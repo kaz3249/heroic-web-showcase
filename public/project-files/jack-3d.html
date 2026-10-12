@@ -69,6 +69,7 @@
     import { createRoot } from "react-dom/client";
     import { motion, useScroll, useTransform } from "framer-motion";
     import { ArrowUpRight } from "lucide-react";
+    import { bindMagnet, bindMarquee, observeAnimatedImages } from "/project-support/jack-motion.mjs";
 
     /* ============ FadeIn ============ */
     const FadeIn = ({ children, delay = 0, duration = 0.7, x = 0, y = 30, as = "div", className = "" }) => {
@@ -91,26 +92,8 @@
     const Magnet = ({ children, padding = 150, strength = 3, activeTransition = "transform 0.3s ease-out", inactiveTransition = "transform 0.6s ease-in-out", className = "" }) => {
       const ref = useRef(null);
       useEffect(() => {
-        const handleMouseMove = (e) => {
-          if (!ref.current) return;
-          const rect = ref.current.getBoundingClientRect();
-          const cx = rect.left + rect.width / 2;
-          const cy = rect.top + rect.height / 2;
-          const distX = e.clientX - cx;
-          const distY = e.clientY - cy;
-          const distance = Math.sqrt(distX * distX + distY * distY);
-          const threshold = Math.max(rect.width, rect.height) / 2 + padding;
-
-          if (distance < threshold) {
-            ref.current.style.transition = activeTransition;
-            ref.current.style.transform = `translate3d(${distX / strength}px, ${distY / strength}px, 0)`;
-          } else {
-            ref.current.style.transition = inactiveTransition;
-            ref.current.style.transform = `translate3d(0,0,0)`;
-          }
-        };
-        window.addEventListener("mousemove", handleMouseMove);
-        return () => window.removeEventListener("mousemove", handleMouseMove);
+        if (!ref.current) return;
+        return bindMagnet(ref.current, { padding, strength, activeTransition, inactiveTransition });
       }, [padding, strength, activeTransition, inactiveTransition]);
 
       return <div ref={ref} className={className} style={{ willChange: "transform" }}>{children}</div>;
@@ -182,11 +165,13 @@
           </FadeIn>
         </div>
 
-        <FadeIn delay={0.6} y={30} className="absolute left-1/2 -translate-x-1/2 z-10 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0">
+        <div className="absolute left-1/2 -translate-x-1/2 z-10 top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0">
+        <FadeIn delay={0.6} y={30}>
           <Magnet padding={150} strength={3}>
             <img src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png" alt="Jack" className="w-[280px] sm:w-[360px] md:w-[440px] lg:w-[520px] h-auto object-contain pointer-events-none" />
           </Magnet>
         </FadeIn>
+        </div>
 
         <div className="flex justify-between items-end pb-7 sm:pb-8 md:pb-10 px-6 md:px-10">
           <FadeIn delay={0.35} y={20}>
@@ -234,20 +219,14 @@
       const row2 = GIFS.slice(11);
 
       useEffect(() => {
-        const handler = () => {
-          if (!sectionRef.current) return;
-          const top = sectionRef.current.getBoundingClientRect().top + window.scrollY;
-          const offset = (window.scrollY - top + window.innerHeight) * 0.3;
-          if (row1Ref.current) row1Ref.current.style.transform = `translateX(${offset - 200}px)`;
-          if (row2Ref.current) row2Ref.current.style.transform = `translateX(${-(offset - 200)}px)`;
-        };
-        window.addEventListener("scroll", handler, { passive: true });
-        handler();
-        return () => window.removeEventListener("scroll", handler);
+        if (!sectionRef.current || !row1Ref.current || !row2Ref.current) return;
+        const stopScroll = bindMarquee(sectionRef.current, row1Ref.current, row2Ref.current);
+        const stopImages = observeAnimatedImages(sectionRef.current);
+        return () => { stopScroll(); stopImages(); };
       }, []);
 
       const renderRow = (items, keyPrefix) => [...items, ...items, ...items].map((src, i) => (
-        <img key={`${keyPrefix}-${i}`} src={src} loading="lazy" alt="" className="w-[420px] h-[270px] rounded-2xl object-cover flex-shrink-0" />
+        <img key={`${keyPrefix}-${i}`} data-animation-src={src} loading="lazy" decoding="async" alt="" className="w-[420px] h-[270px] rounded-2xl object-cover flex-shrink-0" />
       ));
 
       return (
